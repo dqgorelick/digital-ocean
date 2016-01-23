@@ -47,11 +47,11 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
-document.getElementById("up").addEventListener("mousedown", function(){
+document.getElementById("up").addEventListener("touchend", function(){
 	keysDown[38] = true;
 }, false);
 
-document.getElementById("up").addEventListener("mouseup", function(){
+document.getElementById("up").addEventListener("touchstart", function(){
 	delete keysDown[38];
 }, false);
 
