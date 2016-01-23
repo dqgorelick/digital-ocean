@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/dqgorelick/digital-ocean#readme",
   "dependencies": {
+    "bower": "^1.7.2",
     "express": "^4.10.2",
     "gulp": "^3.9.0",
     "gulp-jshint": "^2.0.0",
