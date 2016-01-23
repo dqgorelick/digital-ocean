@@ -47,9 +47,19 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
-jQuery("#up").on("taphold", function(){ 
-	keysDown[38] = true;
-}, false);
+
+function handleMotionEvent(event) {
+    var x = event.accelerationIncludingGravity.x;
+    var y = event.accelerationIncludingGravity.y;
+    var z = event.accelerationIncludingGravity.z;
+    // Do something awesome.
+
+    hero.x += x;
+    hero.y += y;
+    hero.z += z;
+}
+
+addEventListener("devicemotion", handleMotionEvent, true);
 
 // Reset the game when the player catches a monster
 var reset = function () {
