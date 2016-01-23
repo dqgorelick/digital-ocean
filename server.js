@@ -18,6 +18,7 @@ var serverGameBoard = {
 };
 
 var sharkCount = 0;
+var minnowCount = 0;
 var gameRound = 0;
 var canvas = {width: 512, height: 480};
 
@@ -26,29 +27,36 @@ io.on('connection', function(client) {
     // determine if client will be shark or minnow
     if (!gameRound && !sharkCount) {
       client.state="shark"
+      client.speed=384;
       ++sharkCount;
     } else {
       client.state="minnow"
+      client.speed=256;
+      ++minnowCount;
     }
-    var position = generatePlayerPosition();
-    updatePlayer(client.id, client.state, 0, position);
+    var physics = generatePlayerPhysics();
+    updatePlayer(client.id, client.state, 0, physics);
+    logClients();
     //send client data
-    io.emit('onconnected', {id: client.id, state: client.state, minnowsCaught: 0, position: position });
+    io.emit('onconnected', {id: client.id, state: client.state, minnowsCaught: 0, physics: physics});
     client.on('update', function(client) {
         //add client to appropriate objects
-        updatePlayer(client.id, client.state, client.minnowsCaught, client.position);
-        io.emit('board state', serverGameBoard);
+        updatePlayer(client.id, client.state, client.minnowsCaught, client.physics);
+        io.emit('updatedBoard', serverGameBoard);
     })
 
     client.on('disconnect', function() {
         if(client.state == "shark") {
           --sharkCount;
+        } else {
+          --minnowCount;
         }
-        updatePlayer(client.id, null, 0, client.position);
+        updatePlayer(client.id, null, 0, client.physics);
+        logClients();
     });
 });
 
-var updatePlayer = function(id, state, minnowsCaught, position) {
+var updatePlayer = function(id, state, minnowsCaught, physics) {
   if(state) {
     var player = serverGameBoard.clients[id];
     //if player doesn't exist add them
@@ -56,21 +64,24 @@ var updatePlayer = function(id, state, minnowsCaught, position) {
       player = {state: state};
     }
     player.minnowsCaught = minnowsCaught;
-    player.x = position.x;
-    player.y = position.y;
-
+    player.physics.x = physics.x;
+    player.physics.y = physics.y;
   } else {
     //remove player if no state
     serverGameBoard.clients[id] = undefined;
   }
-  logClients();
 }
 
-var generatePlayerPosition = function() {
-    position = {};
-    position.x = 32 + (Math.random() * (canvas.width - 64));
-    position.y = 32 + (Math.random() * (canvas.height - 64));
-    return position;
+var generatePlayerPhysics = function(state) {
+    physics = {};
+    physics.x = 32 + (Math.random() * (canvas.width - 64));
+    physics.y = 32 + (Math.random() * (canvas.height - 64));
+    if(state = "shark") {
+      physics.speed = 384;
+    } else {
+      physics.speed = 256;
+    }
+    return physics;
 }
 
 var logClients = function() {

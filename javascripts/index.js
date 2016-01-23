@@ -3,55 +3,37 @@ var fps = null;
 var connection = false;
 
 var images = {};
-images.shark = document.getElementById("shark");
+var board = {};
+
+//image states
+var backgroundReady = false;
+var sharkReady = false;
+var minnowReady = false;
 
 // player to send to the server
 var player = {};
+
 // creates socket.io instance
 var client = io();
 client.on('onconnected', function(data) {
     player.id = data.id;
     player.state = data.state;
-    console.log("Your username is " + data.id)
-    console.log("Your are a " + data.state)
+    player.minnowsCaught = data.minnowsCaught;
+    player.position = data.position;
+    console.log("Your username is " + player.id);
+    console.log("Your are a " + player.state);
+    console.log("Your initial position is " + JSON.stringify(player.position));
 });
-client.on('board state', function(state) {
+
+client.on('updatedBoard', function(updatedBoard) {
     connection = true;
-    updatedBoard = state;
+    board = updatedBoard;
 });
 
-var sharkReady = false;
-images.shark = new Image();
-images.shark.onload = function() {
-    sharkReady = true;
-};
-images.shark.src = "images/sharksprite.png";
-
-var backgroundReady = false;
-images.background = new Image();
-images.background.onload = function() {
-    backgroundReady = true;
-};
-images.background.src = "images/backgroundsprite.png";
-
-// Game objects
-var shark = {
-    speed: 384 // movement in pixels per second
-};
-var minnow = {
-    speed: 256
-};
-
-var minnowsCaught = 0;
-
-// Reset the game when the player catches a minnow
+// Reset the game when game ends
 var reset = function() {
     shark.x = canvas.width / 2;
     shark.y = canvas.height / 2;
-
-    // Throw the minnow somewhere on the screen randomly
-    minnow.x = 32 + (Math.random() * (canvas.width - 64));
-    minnow.y = 32 + (Math.random() * (canvas.height - 64));
 };
 
 var keysDown = {};
@@ -178,6 +160,28 @@ function GameTick(elapsed)
 
     // console.log(player.x,player.y);
 }
+
+//backgroundImage
+images.background = new Image();
+images.background.onload = function() {
+    backgroundReady = true;
+};
+images.background.src = "images/backgroundsprite.png";
+
+//shark image
+images.shark = new Image();
+images.shark.onload = function() {
+  sharkReady = true;
+};
+images.shark.src = "images/sharksprite.png";
+
+// minnow image
+images.shark = new Image();
+minnowImage.onload = function () {
+	minnowReady = true;
+};
+minnowImage.src = "images/monster.png";
+
 $(document).ready(function(){
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext("2d");
