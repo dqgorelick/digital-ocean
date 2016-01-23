@@ -19,6 +19,7 @@ var serverGameBoard = {
 
 var sharkCount = 0;
 var gameRound = 0;
+var canvas = {width: 512, height: 480};
 
 io.on('connection', function(client) {
     client.id = UUID();
@@ -29,12 +30,13 @@ io.on('connection', function(client) {
     } else {
       client.state="minnow"
     }
-    updatePlayer(client.id, client.state, 0);
+    var position = generatePlayerPosition();
+    updatePlayer(client.id, client.state, 0, position);
     //send client data
-    io.emit('onconnected', {id: client.id, state: client.state, minnowsCaught: 0});
+    io.emit('onconnected', {id: client.id, state: client.state, minnowsCaught: 0, position: position });
     client.on('update', function(client) {
         //add client to appropriate objects
-        updatePlayer(client.id, client.state, client.minnowsCaught);
+        updatePlayer(client.id, client.state, client.minnowsCaught, client.position);
         io.emit('board state', serverGameBoard);
     })
 
@@ -42,23 +44,33 @@ io.on('connection', function(client) {
         if(client.state == "shark") {
           --sharkCount;
         }
-        updatePlayer(client.id, null, 0);
+        updatePlayer(client.id, null, 0, client.position);
     });
 });
 
-var updatePlayer = function(id, state, minnowsCaught) {
+var updatePlayer = function(id, state, minnowsCaught, position) {
   if(state) {
+    var player = serverGameBoard.clients[id];
     //if player doesn't exist add them
-    if(!serverGameBoard.clients[id]) {
-      serverGameBoard.clients[id] = {};
-      serverGameBoard.clients[id].state = state;
+    if(!player) {
+      player = {state: state};
     }
-    serverGameBoard.clients[id].minnowsCaught = minnowsCaught;
+    player.minnowsCaught = minnowsCaught;
+    player.x = position.x;
+    player.y = position.y;
+
   } else {
     //remove player if no state
     serverGameBoard.clients[id] = undefined;
   }
   logClients();
+}
+
+var generatePlayerPosition = function() {
+    position = {};
+    position.x = 32 + (Math.random() * (canvas.width - 64));
+    position.y = 32 + (Math.random() * (canvas.height - 64));
+    return position;
 }
 
 var logClients = function() {
