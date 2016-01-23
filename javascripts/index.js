@@ -3,6 +3,8 @@ var fps = null;
 var connection = false;
 
 var images = {};
+images.shark = document.getElementById("shark");
+
 // player to send to the server
 var player = {};
 // creates socket.io instance
@@ -17,8 +19,20 @@ client.on('board state', function(state) {
     updatedBoard = state;
 });
 
+var sharkReady = false;
+images.shark = new Image();
+images.shark.onload = function() {
+    sharkReady = true;
+};
+images.shark.src = "images/sharksprite.png";
 
-// Game objects
+var backgroundReady = false;
+images.background = new Image();
+images.background.onload = function() {
+    backgroundReady = true;
+};
+images.background.src = "images/backgroundsprite.png";
+
 // Game objects
 var shark = {
     speed: 384 // movement in pixels per second
@@ -99,6 +113,7 @@ function GameTick(elapsed)
     fps.update(elapsed);
     // Movement physics
     // Collision detection and response
+    var lastX = shark.x;
     if (38 in keysDown) { // Player holding up
         shark.y -= shark.speed * elapsed;
     }
@@ -111,6 +126,7 @@ function GameTick(elapsed)
     if (39 in keysDown) { // Player holding right
         shark.x += shark.speed * elapsed;
     }
+    // lastX < shark.x ? images.direction.shark = 1: images.direction.shark = -1;
     if (
         shark.x <= (minnow.x + 32) && minnow.x <= (shark.x + 32) && shark.y <= (minnow.y + 32) && minnow.y <= (shark.y + 32)
     ) {
@@ -120,9 +136,10 @@ function GameTick(elapsed)
     // --- Rendering
 
     // Clear the screen
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+    // ctx.fillStyle = "#000000";
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.drawImage(images.background, 0, 0, 400, 400);
 
     // Render objects
     if(connection) {
@@ -132,13 +149,13 @@ function GameTick(elapsed)
             var x_coord = updatedBoard.clients[entity_id].x;
             var y_coord = updatedBoard.clients[entity_id].y;
             // if (entity_id !== player.id) {
-                ctx.save();
                 {
-                    ctx.fillStyle = "#ffffff";
-                    ctx.setTransform(1, 0, 0, 1, x_coord, y_coord); // Transform that scales circle vertically into a flat ellipse
-                    ctx.beginPath();
-                    ctx.arc(0, 0, 12, 0, 2 * Math.PI, false);
-                    ctx.fill();
+                    // ctx.fillStyle = "#ffffff";
+                    // ctx.setTransform(1, 0, 0, 1, x_coord, y_coord); // Transform that scales circle vertically into a flat ellipse
+                    // ctx.beginPath();
+                    // ctx.arc(0, 0, 12, 0, 2 * Math.PI, false);
+                    // ctx.fill();
+                    ctx.drawImage(images.shark, x_coord-25, y_coord-25, 50, 28);
                 }
                 ctx.restore();
             // }
@@ -152,10 +169,9 @@ function GameTick(elapsed)
     //     ctx.arc(0, 0, 12, 0, 2 * Math.PI, false);
     //     ctx.fill();
     // }
-    // ctx.restore();
-    if(hero.x == 200 || hero.y == 200) {
-        console.log("here")
-    }
+    // ctx.drawImage(images.shark, x_coord-25, y_coord-25, 50, 28);
+
+    ctx.restore();
     player.x = shark.x;
     player.y = shark.y;
 
