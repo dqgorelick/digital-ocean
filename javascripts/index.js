@@ -107,9 +107,9 @@ function handleMotionEvent(event) {
     var x = event.accelerationIncludingGravity.x;
     var y = event.accelerationIncludingGravity.y;
     var z = event.accelerationIncludingGravity.z;
-    hero.x -= x;
-    hero.y += y;
-    hero.z += z;
+    shark.x -= x;
+    shark.y += y;
+    shark.z += z;
 }
 
 if(controls === "tilt"){
