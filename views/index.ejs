@@ -3,12 +3,17 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Join game</title>
+        <link rel="stylesheet" href="/dist/index.css">
 		<script src="/bower_components/jquery/dist/jquery.min.js"></script>
 		<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
 	</head>
 	<body>
+        <div class="wrap">
+                <h1>Sharks and Minnows</h1>
+            </div>
 		<form action="/" method="post">
-			<h3>Digital Ocean</h3>
+			
+            <div class="menu">
 			<span>Username: </span><input type="text" name="username"/>
 			<br></br>
 			<input type="radio" name="controls" value="joystick"/><span>Joystick</span>
@@ -17,5 +22,6 @@
 			<br></br>
 			<input type="submit" value="Play as guest"/>
 		</form>
+    </div>
 	</body>
 </html>

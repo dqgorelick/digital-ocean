@@ -29,3 +29,29 @@ canvas {
   margin: 0 auto;
   padding: 8px;
   box-shadow: 0 3px 2px black; }
+
+.menu {
+  background-color: #404040;
+  width: 50%;
+  box-shadow: 0 3px 2px black;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block; }
+
+form {
+  text-align: center; }
+
+input {
+  background-color: #24505f;
+  border-radius: 4px;
+  color: #fdf5e6;
+  font-family: "Cabin", sans-serif;
+  font-size: 20px;
+  text-decoration: none;
+  border: none; }
+
+input [type="submit"] {
+  font-family: "Lobster", cursive;
+  font-size: 20px;
+  text-decoration: none; }
