@@ -19,10 +19,10 @@ client.on('onconnected', function(data) {
     player.id = data.id;
     player.state = data.state;
     player.minnowsCaught = data.minnowsCaught;
-    player.position = data.position;
+    player.physics = data.physics;
     console.log("Your username is " + player.id);
     console.log("Your are a " + player.state);
-    console.log("Your initial position is " + JSON.stringify(player.position));
+    console.log("Your initial position is " + JSON.stringify(player.physics));
 });
 
 client.on('updatedBoard', function(updatedBoard) {

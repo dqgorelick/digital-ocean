@@ -12,15 +12,18 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-//Game information
-var serverGameBoard = {
-  clients: {}
-};
-
 var sharkCount = 0;
 var minnowCount = 0;
 var gameRound = 0;
 var canvas = {width: 512, height: 480};
+
+//Game information
+var serverGameBoard = {
+  clients: {},
+  canvas: canvas,
+  sharkCount: sharkCount,
+  minnowCount: minnowCount
+};
 
 io.on('connection', function(client) {
     client.id = UUID();
@@ -74,7 +77,7 @@ var updatePlayer = function(id, state, minnowsCaught, physics) {
 
 var generatePlayerPhysics = function(state) {
     physics = {};
-    physics.x = 32 + (Math.random() * (canvas.width - 64));
+    physics.x = 10;
     physics.y = 32 + (Math.random() * (canvas.height - 64));
     if(state = "shark") {
       physics.speed = 384;
