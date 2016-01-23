@@ -9,6 +9,7 @@ var board = {};
 var backgroundReady = false;
 var sharkReady = false;
 var minnowReady = false;
+var barrierReady = false;
 
 // player to send to the server
 var player = {};
@@ -196,6 +197,13 @@ minnowImage.onload = function () {
 	minnowReady = true;
 };
 minnowImage.src = "images/monster.png";
+
+//barrier image
+images.barrier = new Image();
+barrierImage.onload = function () {
+    barrierReady = true;
+};
+barrierImage.src = "images/barriers.png";
 
 $(document).ready(function(){
     canvas = document.getElementById("canvas");
