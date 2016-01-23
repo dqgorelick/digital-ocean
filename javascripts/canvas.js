@@ -54,7 +54,7 @@ function handleMotionEvent(event) {
     var z = event.accelerationIncludingGravity.z;
     // Do something awesome.
 
-    hero.x += x;
+    hero.x -= x;
     hero.y += y;
     hero.z += z;
 }
