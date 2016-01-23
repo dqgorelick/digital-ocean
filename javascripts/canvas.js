@@ -47,8 +47,36 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
-$("#up").bind("touchstart", function(){
-	hero.y -= hero.speed;
+document.getElementById("up").addEventListener("mousedown", function(){
+	keysDown[38] = true;
+}, false);
+
+document.getElementById("up").addEventListener("mouseup", function(){
+	delete keysDown[38];
+}, false);
+
+document.getElementById("left").addEventListener("mousedown", function(){
+	keysDown[37] = true;
+}, false);
+
+document.getElementById("left").addEventListener("mouseup", function(){
+	delete keysDown[37];
+}, false);
+
+document.getElementById("right").addEventListener("mousedown", function(){
+	keysDown[39] = true;
+}, false);
+
+document.getElementById("right").addEventListener("mouseup", function(){
+	delete keysDown[39];
+}, false);
+
+document.getElementById("down").addEventListener("mousedown", function(){
+	keysDown[40] = true;
+}, false);
+
+document.getElementById("down").addEventListener("mouseup", function(){
+	delete keysDown[40];
 }, false);
 
 function handleMotionEvent(event) {
