@@ -47,7 +47,7 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
-$("#up").addEventListener("touchstart", function(){
+$("#up").bind("touchstart", function(){
 	hero.y -= hero.speed;
 }, false);
 
