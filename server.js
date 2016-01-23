@@ -12,6 +12,10 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/canvas', function(req, res) {
+    res.sendFile(__dirname + '/canvas.html');
+});
+
 Array.prototype.remove = function() {
     var what, a = arguments, L = a.length, ax;
     while (L && this.length) {
