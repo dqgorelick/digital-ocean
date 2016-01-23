@@ -47,12 +47,8 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
-document.getElementById("up").addEventListener("touchend", function(){
+jQuery("#up").on("taphold", function(){ 
 	keysDown[38] = true;
-}, false);
-
-document.getElementById("up").addEventListener("touchstart", function(){
-	delete keysDown[38];
 }, false);
 
 // Reset the game when the player catches a monster
