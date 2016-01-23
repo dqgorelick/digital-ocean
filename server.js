@@ -11,17 +11,6 @@ app.use(express.static(__dirname));
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
-//
-// Array.prototype.remove = function() {
-//     var what, a = arguments, L = a.length, ax;
-//     while (L && this.length) {
-//         what = a[--L];
-//         while ((ax = this.indexOf(what)) !== -1) {
-//             this.splice(ax, 1);
-//         }
-//     }
-//     return this;
-// };
 
 //Game information
 var serverGameBoard = {
@@ -59,12 +48,14 @@ io.on('connection', function(client) {
 
 var updatePlayer = function(id, state, minnowsCaught) {
   if(state) {
+    //if player doesn't exist add them
     if(!serverGameBoard.clients[id]) {
       serverGameBoard.clients[id] = {};
       serverGameBoard.clients[id].state = state;
     }
     serverGameBoard.clients[id].minnowsCaught = minnowsCaught;
   } else {
+    //remove player if no state
     serverGameBoard.clients[id] = undefined;
   }
   logClients();
