@@ -15,7 +15,7 @@ app.get('/', function(req, res) {
 var sharkCount = 0;
 var minnowCount = 0;
 var gameRound = 0;
-var canvas = {width: 400, height: 400};
+var canvas = {width: 1000, height: 1000};
 
 //Game information
 var serverGameBoard = {
@@ -54,7 +54,7 @@ io.on('connection', function(client) {
         } else {
           --minnowCount;
         }
-        updatePlayer(client.id, null, 0, client.physics);
+        delete serverGameBoard.clients[client.id];
         logClients();
     });
 });
@@ -64,14 +64,12 @@ var createPlayer = function(id, state, physics) {
 }
 
 var updatePlayer = function(id, state, minnowsCaught, physics) {
-  console.log(JSON.stringify(serverGameBoard));
-  if(state) {
     var player = serverGameBoard.clients[id];
-    console.log(JSON.stringify(player));
     //if player doesn't exist add them
     if(!player) {
       player = createPlayer(id, state, physics);
       minnowsCaught = 0;
+      serverGameBoard.clients[id] = player;
     }
 
     if(player.state != state) {
@@ -86,10 +84,6 @@ var updatePlayer = function(id, state, minnowsCaught, physics) {
     player.minnowsCaught = minnowsCaught;
     player.physics.x = physics.x;
     player.physics.y = physics.y;
-  } else {
-    //remove player if no state
-    serverGameBoard.clients[id] = undefined;
-  }
 }
 
 var generatePlayerPhysics = function(state) {
