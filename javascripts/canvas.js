@@ -47,6 +47,9 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
+$("#up").addEventListener("touchstart", function(){
+	hero.y -= hero.speed;
+}, false);
 
 function handleMotionEvent(event) {
     var x = event.accelerationIncludingGravity.x;
@@ -59,7 +62,7 @@ function handleMotionEvent(event) {
     hero.z += z;
 }
 
-addEventListener("devicemotion", handleMotionEvent, true);
+// addEventListener("devicemotion", handleMotionEvent, true);
 
 // Reset the game when the player catches a monster
 var reset = function () {
