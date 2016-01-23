@@ -15,7 +15,7 @@ app.get('/', function(req, res) {
 var sharkCount = 0;
 var minnowCount = 0;
 var gameRound = 0;
-var canvas = {width: 512, height: 480};
+var canvas = {width: 400, height: 400};
 
 //Game information
 var serverGameBoard = {
@@ -37,11 +37,11 @@ io.on('connection', function(client) {
       client.speed=256;
       ++minnowCount;
     }
-    var physics = generatePlayerPhysics();
+    var physics = generatePlayerPhysics(client.state);
     updatePlayer(client.id, client.state, 0, physics);
     logClients();
     //send client data
-    io.emit('onconnected', {id: client.id, state: client.state, minnowsCaught: 0, physics: physics});
+    io.emit('onconnected', createPlayer(client.id, client.state, physics));
     client.on('update', function(client) {
         //add client to appropriate objects
         updatePlayer(client.id, client.state, client.minnowsCaught, client.physics);
@@ -59,12 +59,29 @@ io.on('connection', function(client) {
     });
 });
 
+var createPlayer = function(id, state, physics) {
+   return {id: id, state: state, minnowsCaught: 0, physics: physics}
+}
+
 var updatePlayer = function(id, state, minnowsCaught, physics) {
+  console.log(JSON.stringify(serverGameBoard));
   if(state) {
     var player = serverGameBoard.clients[id];
+    console.log(JSON.stringify(player));
     //if player doesn't exist add them
     if(!player) {
-      player = {state: state};
+      player = createPlayer(id, state, physics);
+      minnowsCaught = 0;
+    }
+
+    if(player.state != state) {
+      if(state == "shark") {
+        --sharkCount;
+        ++minnowCount;
+      } else {
+        --minnowCount;
+        ++sharkCount;
+      }
     }
     player.minnowsCaught = minnowsCaught;
     player.physics.x = physics.x;
@@ -77,12 +94,13 @@ var updatePlayer = function(id, state, minnowsCaught, physics) {
 
 var generatePlayerPhysics = function(state) {
     physics = {};
-    physics.x = 10;
     physics.y = 32 + (Math.random() * (canvas.height - 64));
     if(state = "shark") {
       physics.speed = 384;
+      physics.x = canvas.width-10;
     } else {
       physics.speed = 256;
+      physics.x = 10;
     }
     return physics;
 }

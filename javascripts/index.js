@@ -32,8 +32,8 @@ client.on('updatedBoard', function(updatedBoard) {
 
 // Reset the game when game ends
 var reset = function() {
-    shark.x = canvas.width / 2;
-    shark.y = canvas.height / 2;
+    player.physics.x = canvas.width / 2;
+    player.physics.y = canvas.height / 2;
 };
 
 var keysDown = {};
@@ -41,9 +41,9 @@ function handleMotionEvent(event) {
     var x = event.accelerationIncludingGravity.x;
     var y = event.accelerationIncludingGravity.y;
     var z = event.accelerationIncludingGravity.z;
-    shark.x -= x;
-    shark.y += y;
-    shark.z += z;
+    player.physics.x -= x;
+    player.physics.y += y;
+    player.physics.z += z;
 }
 addEventListener("keydown", function(e) {
     keysDown[e.keyCode] = true;
@@ -96,26 +96,33 @@ function GameTick(elapsed)
     fps.update(elapsed);
     // Movement physics
     // Collision detection and response
-    var lastX = shark.x;
+    var lastX = player.physics.x;
     if (38 in keysDown) { // Player holding up
-        shark.y -= shark.speed * elapsed;
+        player.physics.y -= player.physics.speed * elapsed;
     }
     if (40 in keysDown) { // Player holding down
-        shark.y += shark.speed * elapsed;
+        player.physics.y += player.physics.speed * elapsed;
     }
     if (37 in keysDown) { // Player holding left
-        shark.x -= shark.speed * elapsed;
+        player.physics.x -= player.physics.speed * elapsed;
     }
     if (39 in keysDown) { // Player holding right
-        shark.x += shark.speed * elapsed;
+        player.physics.x += player.physics.speed * elapsed;
+    }
+    console.log(JSON.stringify(board.clients));
+    for (var otherPlayer in board.clients) {
+      if (clients.hasOwnProperty(otherPlayer) && clients.state == "shark") {
+        if(collisionDetected(otherPlayer)) {
+          if(player.state == "shark") {
+            ++minnowsCaught;
+          } else {
+            player.state = "minnow";
+          }
+        }
+      }
     }
     // lastX < shark.x ? images.direction.shark = 1: images.direction.shark = -1;
-    if (
-        shark.x <= (minnow.x + 32) && minnow.x <= (shark.x + 32) && shark.y <= (minnow.y + 32) && minnow.y <= (shark.y + 32)
-    ) {
-        ++minnowsCaught;
-        reset();
-    }
+
     // --- Rendering
 
     // Clear the screen
@@ -126,11 +133,11 @@ function GameTick(elapsed)
 
     // Render objects
     if(connection) {
-        console.log(updatedBoard.active.length);
-        for (var i = 0; i < updatedBoard.active.length; i++) {
-            var entity_id = updatedBoard.active[i];
-            var x_coord = updatedBoard.clients[entity_id].x;
-            var y_coord = updatedBoard.clients[entity_id].y;
+        console.log(board.clients.length);
+        for (var i = 0; i < board.clients.length; i++) {
+            var entity_id = board.clients[i].id;
+            var x_coord = board.clients[entity_id].physics.x;
+            var y_coord = board.clients[entity_id].physics.y;
             // if (entity_id !== player.id) {
                 {
                     // ctx.fillStyle = "#ffffff";
@@ -138,6 +145,7 @@ function GameTick(elapsed)
                     // ctx.beginPath();
                     // ctx.arc(0, 0, 12, 0, 2 * Math.PI, false);
                     // ctx.fill();
+                    if(en)
                     ctx.drawImage(images.shark, x_coord-25, y_coord-25, 50, 28);
                 }
                 ctx.restore();
@@ -155,10 +163,17 @@ function GameTick(elapsed)
     // ctx.drawImage(images.shark, x_coord-25, y_coord-25, 50, 28);
 
     ctx.restore();
-    player.x = shark.x;
-    player.y = shark.y;
+    // player.x = player.physics.x;
+    // player.y = player.physics.y;
 
     // console.log(player.x,player.y);
+}
+
+var collisionDetected = function(otherPlayer) {
+  return (otherPlayer.physics.x <= (player.physics.x + 32) &&
+  player.physics.x <= (otherPlayer.physics.x + 32) &&
+  otherPlayer.physics.y <= (player.physics.y + 32) &&
+  player.physics.y <= (otherPlayer.physics.y + 32))
 }
 
 //backgroundImage
