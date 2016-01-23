@@ -34,7 +34,7 @@ io.on('connection', function(client) {
     console.log('active clients: ' + server_GB.active.length);
     // give client their ID
 
-    io.emit('onconnected', { id: client.userid } );
+    io.emit('onconnected', { id: client.userid, state: server_GB } );
     client.on('update', function(player) {
         server_GB.clients[player.id] = player;
         io.emit('board state', server_GB);
