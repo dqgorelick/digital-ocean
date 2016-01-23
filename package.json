@@ -31,5 +31,8 @@
     "gulp-jshint": "^2.0.0",
     "gulp-nodemon": "^2.0.6",
     "gulp-sass": "^2.1.1"
+  },
+  "scripts": {
+    "start": "gulp"
   }
 }
