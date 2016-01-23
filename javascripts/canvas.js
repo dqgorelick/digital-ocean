@@ -1,8 +1,25 @@
-// Create the canvas
+var GB = {
+	width: 512,
+	height: 480
+};
+var connection = false;
+var updated;
+
+// player to send to the server
+var player = {};
+var client = io();
+client.on('onconnected', function(data) {
+	player.id = data.id;
+});
+client.on('board state', function(board) {
+	connection = true;
+	updated = board;
+});
+
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-canvas.width = 512;
-canvas.height = 480;
+canvas.width = GB.width;
+canvas.height = GB.height;
 document.body.appendChild(canvas);
 
 // Background image
@@ -83,8 +100,6 @@ function handleMotionEvent(event) {
     var x = event.accelerationIncludingGravity.x;
     var y = event.accelerationIncludingGravity.y;
     var z = event.accelerationIncludingGravity.z;
-    // Do something awesome.
-
     hero.x -= x;
     hero.y += y;
     hero.z += z;
@@ -127,6 +142,8 @@ var update = function (modifier) {
 		++monstersCaught;
 		reset();
 	}
+	player.x = hero.x;
+	player.y = hero.y;
 };
 
 // Draw everything
@@ -136,7 +153,17 @@ var render = function () {
 	}
 
 	if (heroReady) {
-		ctx.drawImage(heroImage, hero.x, hero.y);
+		// ctx.drawImage(heroImage, hero.x, hero.y);
+		// draw other players
+		if (connection) {
+			updated.active.forEach(function(id){
+				console.log("drawing ", id);
+				console.log(updated.clients[id].x);
+				if(updated.clients[id].x && updated.clients[id].y){
+					ctx.drawImage(heroImage, updated.clients[id].x, updated.clients[id].y);
+				}
+			});
+		}
 	}
 
 	if (monsterReady) {
@@ -151,25 +178,36 @@ var render = function () {
 	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
 };
 
+var now, delta, startTime, elapsed, fpsInterval, fps;
 // The main game loop
 var main = function () {
-	var now = Date.now();
-	var delta = now - then;
+	now = Date.now();
 
+	// throttle for sending to server
+	fps = 22;
+	fpsInterval=1000/fps;
+    startTime=then;
+    animate();
+};
+
+function animate() {
+	requestAnimationFrame(animate);
+	now = Date.now();
+	delta = now - then;
 	update(delta / 1000);
 	render();
-
 	then = now;
 
-	// Request to do this again ASAP
-	requestAnimationFrame(main);
-};
+	elapsed = now - startTime;
+	if (elapsed > fpsInterval) {
+		startTime = now - (elapsed % fpsInterval);
+		client.emit('update', player);
+	}
+}
 
 // Cross-browser support for requestAnimationFrame
 var w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
-
-// Let's play this game!
 var then = Date.now();
 reset();
 main();

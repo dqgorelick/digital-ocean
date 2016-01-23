@@ -1,0 +1,34 @@
+We will call this the physics update loop, which is run every 15ms (about 66 updates per second).
+The second update we can call the server update loop, which is run at a slower rate, every 45ms (about 22 updates per second). In the server update loop we send the state of the server to all clients.
+
+server loop
+
+RequestAnimationFrame loop:
+
+Clear canvas
+Draw info/status
+Handle input (sends input messages to server)
+Update position (using client prediction)
+Move the other clients based on the server position (interpolation)
+Draw players on canvas
+
+The interpolation/smoothing of the other clients. This is handled in this fashion:
+
+Store the network messages from the server about other clients, for at least 100ms
+Interpolate between a last known position, and a newer position in time (100ms behind the server time)
+Draw the interpolated clients at the interpolated position.
+
+game status:
+player statuses
+{
+    id {
+        pos {
+            x
+            y
+        }
+        inputs {
+
+        }
+    }
+}
+

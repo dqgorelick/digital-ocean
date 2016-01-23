@@ -4,7 +4,7 @@
   "description": "Sharks and minnows meets a maze meets Mario Party meets socket.io",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "gulp"
   },
   "repository": {
     "type": "git",
@@ -19,20 +19,19 @@
     "mario",
     "party"
   ],
-  "author": "DQG HL CD CSS RB KB",
+  "author": "DQG HL CD CSS RB KS",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/dqgorelick/digital-ocean/issues"
   },
   "homepage": "https://github.com/dqgorelick/digital-ocean#readme",
   "dependencies": {
-    "express": "^4.13.4",
+    "express": "^4.10.2",
     "gulp": "^3.9.0",
     "gulp-jshint": "^2.0.0",
     "gulp-nodemon": "^2.0.6",
-    "gulp-sass": "^2.1.1"
-  },
-  "scripts": {
-    "start": "gulp"
+    "gulp-sass": "^2.1.1",
+    "jshint": "^2.9.1",
+    "socket.io": "^1.4.4"
   }
 }

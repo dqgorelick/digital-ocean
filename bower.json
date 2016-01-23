@@ -1,0 +1,31 @@
+{
+  "name": "digital-ocean",
+  "description": "Sharks and minnows meets a maze meets Mario Party meets socket.io",
+  "main": "server.js",
+  "authors": [
+    "DQG HL CD CSS RB KS"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "socket.io",
+    "digital-ocean",
+    "sharks",
+    "minnows",
+    "mazes",
+    "mario",
+    "party"
+  ],
+  "homepage": "https://github.com/dqgorelick/digital-ocean",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0",
+    "socket.io": "~1.4.4"
+  }
+}

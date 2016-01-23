@@ -10,6 +10,12 @@ gulp.task('server', function () {
     })
 });
 
+gulp.task('jshint', function () {
+    gulp.src('javascripts/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+});
+
 gulp.task('styles', function(){
     return gulp.src(['stylesheets/**.scss'])
         .pipe(sass().on('error', sass.logError))
