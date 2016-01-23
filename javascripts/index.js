@@ -5,3 +5,4 @@ client.on('onconnected', function(data) {
 // user.on('chat message', function(msg){
 //     $('#messages').append($('<li>').text(msg));
 //   });
+

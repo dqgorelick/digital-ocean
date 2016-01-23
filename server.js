@@ -6,7 +6,6 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var UUID = require('node-uuid');
 
-
 app.use(express.static(__dirname));
 
 app.get('/', function(req, res) {
@@ -24,29 +23,27 @@ Array.prototype.remove = function() {
     return this;
 };
 
-var GB = {
+var server_GB = {
     clients: {},
-    active: [],
+    active : []
 }
 
 io.on('connection', function(client) {
     client.userid = UUID();
-    GB.active.push(client.userid);
-    console.log('active clients: ' + GB.active);
+    server_GB.active.push(client.userid);
+    console.log('active clients: ' + server_GB.active.length);
     // give client their ID
+
     io.emit('onconnected', { id: client.userid } );
     client.on('update', function(player) {
-        GB.clients[player.id] = player;
-        io.emit('board state', GB);
+        server_GB.clients[player.id] = player;
+        io.emit('board state', server_GB);
     })
+
     client.on('disconnect', function() {
-        GB.active.remove(client.userid);
-        console.log('active clients: ' + GB.active);
+        server_GB.active.remove(client.userid);
+        console.log('active clients: ' + server_GB.active.length);
     });
-    // client.on('chat message', function(msg) {
-    //     console.log('message: ' + msg);
-    //     io.emit('chat message', msg);
-    // });
 });
 
 

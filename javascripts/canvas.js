@@ -3,17 +3,18 @@ var GB = {
 	height: 480
 };
 var connection = false;
-var updated;
+var updatedBoard;
 
 // player to send to the server
 var player = {};
+// creates socket.io instance
 var client = io();
 client.on('onconnected', function(data) {
 	player.id = data.id;
 });
 client.on('board state', function(board) {
 	connection = true;
-	updated = board;
+	updatedBoard = board;
 });
 
 var canvas = document.createElement("canvas");
@@ -105,7 +106,7 @@ function handleMotionEvent(event) {
     hero.z += z;
 }
 
-addEventListener("devicemotion", handleMotionEvent, true);
+// addEventListener("devicemotion", handleMotionEvent, true);
 
 // Reset the game when the player catches a monster
 var reset = function () {
@@ -156,11 +157,11 @@ var render = function () {
 		// ctx.drawImage(heroImage, hero.x, hero.y);
 		// draw other players
 		if (connection) {
-			updated.active.forEach(function(id){
+			updatedBoard.active.forEach(function(id){
 				console.log("drawing ", id);
-				console.log(updated.clients[id].x);
-				if(updated.clients[id].x && updated.clients[id].y){
-					ctx.drawImage(heroImage, updated.clients[id].x, updated.clients[id].y);
+				console.log(updatedBoard.clients[id].x);
+				if(updatedBoard.clients[id].x && updatedBoard.clients[id].y){
+					ctx.drawImage(heroImage, updatedBoard.clients[id].x, updatedBoard.clients[id].y);
 				}
 			});
 		}
@@ -178,32 +179,44 @@ var render = function () {
 	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
 };
 
-var now, delta, startTime, elapsed, fpsInterval, fps;
+var now, delta;
+var updateInterval, updateFPS, updateFlag, updateDelta;
+var renderInterval, renderFPS, renderFlag, renderDelta;
 // The main game loop
 var main = function () {
-	now = Date.now();
+    now = Date.now();
 
-	// throttle for sending to server
-	fps = 22;
-	fpsInterval=1000/fps;
-    startTime=then;
+    // throttle for sending to server
+    updateFPS = 42;
+    updateInterval=1000/updateFPS;
+    updateFlag = then;
+    // throttling for the physics engine
+    renderFPS = 66;
+    renderInterval=1000/renderFPS;
+    renderFlag = then;
     animate();
 };
 
 function animate() {
-	requestAnimationFrame(animate);
-	now = Date.now();
-	delta = now - then;
-	update(delta / 1000);
-	render();
-	then = now;
-
-	elapsed = now - startTime;
-	if (elapsed > fpsInterval) {
-		startTime = now - (elapsed % fpsInterval);
-		client.emit('update', player);
-	}
+    requestAnimationFrame(animate);
+    now = Date.now();
+    delta = now - then;
+    then = now;
+    // only run the render 66 FPS
+    renderDelta = now - renderFlag;
+    if (renderDelta > renderInterval) {
+        renderFlag = now - (renderDelta % renderInterval);
+        update(delta / 1000);
+        render();
+    }
+    // only run the updatedBoard 42 FPS
+    updateDelta = now - updateFlag;
+    if (updateDelta > updateInterval) {
+        updateFlag = now - (updateDelta % updateInterval);
+        client.emit('update', player);
+    }
 }
+
 
 // Cross-browser support for requestAnimationFrame
 var w = window;
