@@ -1,6 +1,6 @@
 var GB = {
-	width: 512,
-	height: 480
+    width: 512,
+    height: 480
 };
 var connection = false;
 var updated;
@@ -58,44 +58,44 @@ var minnow = {
 // Handle keyboard controls
 var keysDown = {};
 
-addEventListener("keydown", function (e) {
-	keysDown[e.keyCode] = true;
+addEventListener("keydown", function(e) {
+    keysDown[e.keyCode] = true;
 }, false);
 
-addEventListener("keyup", function (e) {
-	delete keysDown[e.keyCode];
+addEventListener("keyup", function(e) {
+    delete keysDown[e.keyCode];
 }, false);
 
-document.getElementById("up").addEventListener("touchstart", function(){
-	keysDown[38] = true;
+document.getElementById("up").addEventListener("touchstart", function() {
+    keysDown[38] = true;
 }, false);
 
-document.getElementById("up").addEventListener("touchend", function(){
-	delete keysDown[38];
+document.getElementById("up").addEventListener("touchend", function() {
+    delete keysDown[38];
 }, false);
 
-document.getElementById("left").addEventListener("touchstart", function(){
-	keysDown[37] = true;
+document.getElementById("left").addEventListener("touchstart", function() {
+    keysDown[37] = true;
 }, false);
 
-document.getElementById("left").addEventListener("touchend", function(){
-	delete keysDown[37];
+document.getElementById("left").addEventListener("touchend", function() {
+    delete keysDown[37];
 }, false);
 
-document.getElementById("right").addEventListener("touchstart", function(){
-	keysDown[39] = true;
+document.getElementById("right").addEventListener("touchstart", function() {
+    keysDown[39] = true;
 }, false);
 
-document.getElementById("right").addEventListener("touchend", function(){
-	delete keysDown[39];
+document.getElementById("right").addEventListener("touchend", function() {
+    delete keysDown[39];
 }, false);
 
-document.getElementById("down").addEventListener("touchstart", function(){
-	keysDown[40] = true;
+document.getElementById("down").addEventListener("touchstart", function() {
+    keysDown[40] = true;
 }, false);
 
-document.getElementById("down").addEventListener("touchend", function(){
-	delete keysDown[40];
+document.getElementById("down").addEventListener("touchend", function() {
+    delete keysDown[40];
 }, false);
 
 function handleMotionEvent(event) {
@@ -183,13 +183,17 @@ var render = function () {
 
 var now, delta, startTime, elapsed, fpsInterval, fps;
 // The main game loop
-var main = function () {
-	now = Date.now();
+var main = function() {
+    now = Date.now();
 
-	// throttle for sending to server
-	fps = 22;
-	fpsInterval=1000/fps;
-    startTime=then;
+    // throttle for sending to server
+    updateFPS = 42;
+    updateInterval = 1000 / updateFPS;
+    updateFlag = then;
+    // throttling for the physics engine
+    renderFPS = 66;
+    renderInterval = 1000 / renderFPS;
+    renderFlag = then;
     animate();
 };
 
