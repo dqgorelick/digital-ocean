@@ -1,6 +1,49 @@
 // this is sass!
-$blue: #5168d2;
 
+// Google Fonts
+@import url(https://fonts.googleapis.com/css?family=Lobster|Cabin);
+
+// Variables
+$blue: #24505f;
+$grey: #292929;
+$textcolor: #fdf5e6;
+$title-font: 'Lobster', cursive;
+$body-font: 'Cabin', sans-serif;
+$shadow: 0 3px 2px black;
+
+// Styles
 html {
+    background-color: $grey;
+}
+
+body {
+  font-family: $body-font;
+  font-weight: 400;
+  color: $textcolor;
+  overflow-x: hidden;
+}
+
+h1 {
+    font-family: $title-font;
+    font-weight: 400;
+    font-size: 48px;
+    text-align: center;
+    margin: 0;
+}
+
+canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    box-shadow: $shadow;
+}
+
+.wrap {
     background-color: $blue;
+    width: 100%;
+    margin: 0 auto;
+    padding: 8px;
+    box-shadow: $shadow;
 }
