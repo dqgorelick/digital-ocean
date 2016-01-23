@@ -19,25 +19,35 @@ client.on('board state', function(state) {
 
 
 // Game objects
-var hero = {
-    speed: 256 // movement in pixels per second
+// Game objects
+var shark = {
+    speed: 384 // movement in pixels per second
+};
+var minnow = {
+    speed: 256
 };
 
-var monster = {};
-var monstersCaught = 0;
+var minnowsCaught = 0;
 
-// Reset the game when the player catches a monster
+// Reset the game when the player catches a minnow
 var reset = function() {
-    hero.x = canvas.width / 2;
-    hero.y = canvas.height / 2;
+    shark.x = canvas.width / 2;
+    shark.y = canvas.height / 2;
 
-    // Throw the monster somewhere on the screen randomly
-    monster.x = 32 + (Math.random() * (canvas.width - 64));
-    monster.y = 32 + (Math.random() * (canvas.height - 64));
+    // Throw the minnow somewhere on the screen randomly
+    minnow.x = 32 + (Math.random() * (canvas.width - 64));
+    minnow.y = 32 + (Math.random() * (canvas.height - 64));
 };
 
 var keysDown = {};
-
+function handleMotionEvent(event) {
+    var x = event.accelerationIncludingGravity.x;
+    var y = event.accelerationIncludingGravity.y;
+    var z = event.accelerationIncludingGravity.z;
+    shark.x -= x;
+    shark.y += y;
+    shark.z += z;
+}
 addEventListener("keydown", function(e) {
     keysDown[e.keyCode] = true;
 }, false);
@@ -90,24 +100,23 @@ function GameTick(elapsed)
     // Movement physics
     // Collision detection and response
     if (38 in keysDown) { // Player holding up
-        hero.y -= hero.speed * elapsed;
+        shark.y -= shark.speed * elapsed;
     }
     if (40 in keysDown) { // Player holding down
-        hero.y += hero.speed * elapsed;
+        shark.y += shark.speed * elapsed;
     }
     if (37 in keysDown) { // Player holding left
-        hero.x -= hero.speed * elapsed;
+        shark.x -= shark.speed * elapsed;
     }
     if (39 in keysDown) { // Player holding right
-        hero.x += hero.speed * elapsed;
+        shark.x += shark.speed * elapsed;
     }
     if (
-        hero.x <= (monster.x + 32) && monster.x <= (hero.x + 32) && hero.y <= (monster.y + 32) && monster.y <= (hero.y + 32)
+        shark.x <= (minnow.x + 32) && minnow.x <= (shark.x + 32) && shark.y <= (minnow.y + 32) && minnow.y <= (shark.y + 32)
     ) {
-        ++monstersCaught;
+        ++minnowsCaught;
         reset();
     }
-
     // --- Rendering
 
     // Clear the screen
@@ -147,8 +156,8 @@ function GameTick(elapsed)
     if(hero.x == 200 || hero.y == 200) {
         console.log("here")
     }
-    player.x = hero.x;
-    player.y = hero.y;
+    player.x = shark.x;
+    player.y = shark.y;
 
     // console.log(player.x,player.y);
 }
