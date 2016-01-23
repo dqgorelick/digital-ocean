@@ -3,18 +3,18 @@ var GB = {
 	height: 480
 };
 var connection = false;
-var updatedBoard;
+var updated;
 
 // player to send to the server
 var player = {};
-// creates socket.io instance
 var client = io();
 client.on('onconnected', function(data) {
 	player.id = data.id;
+	player.state = data.state;
 });
 client.on('board state', function(board) {
 	connection = true;
-	updatedBoard = board;
+	updated = board;
 });
 
 var canvas = document.createElement("canvas");
@@ -24,35 +24,37 @@ canvas.height = GB.height;
 document.body.appendChild(canvas);
 
 // Background image
-var bgReady = false;
+var gameBoardReady = false;
 var bgImage = new Image();
 bgImage.onload = function () {
-	bgReady = true;
+	gameBoardReady = true;
 };
 bgImage.src = "images/background.png";
 
-// Hero image
-var heroReady = false;
-var heroImage = new Image();
-heroImage.onload = function () {
-	heroReady = true;
+// shark image
+var sharkReady = false;
+var sharkImage = new Image();
+sharkImage.onload = function () {
+	sharkReady = true;
 };
-heroImage.src = "images/hero.png";
+sharkImage.src = "images/hero.png";
 
-// Monster image
-var monsterReady = false;
-var monsterImage = new Image();
-monsterImage.onload = function () {
-	monsterReady = true;
+// minnow image
+var minnowReady = false;
+var minnowImage = new Image();
+minnowImage.onload = function () {
+	minnowReady = true;
 };
-monsterImage.src = "images/monster.png";
+minnowImage.src = "images/monster.png";
 
 // Game objects
-var hero = {
-	speed: 256 // movement in pixels per second
+var shark = {
+	speed: 384 // movement in pixels per second
 };
-var monster = {};
-var monstersCaught = 0;
+var minnow = {
+	speed: 256
+};
+var minnowsCaught = 0;
 
 // Handle keyboard controls
 var keysDown = {};
@@ -101,74 +103,74 @@ function handleMotionEvent(event) {
     var x = event.accelerationIncludingGravity.x;
     var y = event.accelerationIncludingGravity.y;
     var z = event.accelerationIncludingGravity.z;
-    hero.x -= x;
-    hero.y += y;
-    hero.z += z;
+    shark.x -= x;
+    shark.y += y;
+    shark.z += z;
 }
 
-// addEventListener("devicemotion", handleMotionEvent, true);
+addEventListener("devicemotion", handleMotionEvent, true);
 
-// Reset the game when the player catches a monster
+// Reset the game when the player catches a minnow
 var reset = function () {
-	hero.x = canvas.width / 2;
-	hero.y = canvas.height / 2;
+	shark.x = canvas.width / 2;
+	shark.y = canvas.height / 2;
 
-	// Throw the monster somewhere on the screen randomly
-	monster.x = 32 + (Math.random() * (canvas.width - 64));
-	monster.y = 32 + (Math.random() * (canvas.height - 64));
+	// Throw the minnow somewhere on the screen randomly
+	minnow.x = 32 + (Math.random() * (canvas.width - 64));
+	minnow.y = 32 + (Math.random() * (canvas.height - 64));
 };
 
 // Update game objects
 var update = function (modifier) {
 	if (38 in keysDown) { // Player holding up
-		hero.y -= hero.speed * modifier;
+		shark.y -= shark.speed * modifier;
 	}
 	if (40 in keysDown) { // Player holding down
-		hero.y += hero.speed * modifier;
+		shark.y += shark.speed * modifier;
 	}
 	if (37 in keysDown) { // Player holding left
-		hero.x -= hero.speed * modifier;
+		shark.x -= shark.speed * modifier;
 	}
 	if (39 in keysDown) { // Player holding right
-		hero.x += hero.speed * modifier;
+		shark.x += shark.speed * modifier;
 	}
 
 	// Are they touching?
 	if (
-		hero.x <= (monster.x + 32)
-		&& monster.x <= (hero.x + 32)
-		&& hero.y <= (monster.y + 32)
-		&& monster.y <= (hero.y + 32)
+		shark.x <= (minnow.x + 32)
+		&& minnow.x <= (shark.x + 32)
+		&& shark.y <= (minnow.y + 32)
+		&& minnow.y <= (shark.y + 32)
 	) {
-		++monstersCaught;
+		++minnowsCaught;
 		reset();
 	}
-	player.x = hero.x;
-	player.y = hero.y;
+	player.x = shark.x;
+	player.y = shark.y;
 };
 
 // Draw everything
 var render = function () {
-	if (bgReady) {
+	if (gameBoardReady) {
 		ctx.drawImage(bgImage, 0, 0);
 	}
 
-	if (heroReady) {
-		// ctx.drawImage(heroImage, hero.x, hero.y);
+	if (sharkReady) {
+		// ctx.drawImage(sharkImage, shark.x, shark.y);
 		// draw other players
 		if (connection) {
-			updatedBoard.active.forEach(function(id){
+			updated.active.forEach(function(id){
 				console.log("drawing ", id);
-				console.log(updatedBoard.clients[id].x);
-				if(updatedBoard.clients[id].x && updatedBoard.clients[id].y){
-					ctx.drawImage(heroImage, updatedBoard.clients[id].x, updatedBoard.clients[id].y);
+				console.log(updated.clients[id].x);
+				if(updated.clients[id].x && updated.clients[id].y){
+					ctx.drawImage(sharkImage, updated.clients[id].x, updated.clients[id].y);
 				}
 			});
 		}
 	}
 
-	if (monsterReady) {
-		ctx.drawImage(monsterImage, monster.x, monster.y);
+	if (minnowReady) {
+		ctx.drawImage(minnowImage, minnow.x, minnow.y);
 	}
 
 	// Score
@@ -176,47 +178,35 @@ var render = function () {
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
+	ctx.fillText("Goblins caught: " + minnowsCaught, 32, 32);
 };
 
-var now, delta;
-var updateInterval, updateFPS, updateFlag, updateDelta;
-var renderInterval, renderFPS, renderFlag, renderDelta;
+var now, delta, startTime, elapsed, fpsInterval, fps;
 // The main game loop
 var main = function () {
-    now = Date.now();
+	now = Date.now();
 
-    // throttle for sending to server
-    updateFPS = 42;
-    updateInterval=1000/updateFPS;
-    updateFlag = then;
-    // throttling for the physics engine
-    renderFPS = 66;
-    renderInterval=1000/renderFPS;
-    renderFlag = then;
+	// throttle for sending to server
+	fps = 22;
+	fpsInterval=1000/fps;
+    startTime=then;
     animate();
 };
 
 function animate() {
-    requestAnimationFrame(animate);
-    now = Date.now();
-    delta = now - then;
-    then = now;
-    // only run the render 66 FPS
-    renderDelta = now - renderFlag;
-    if (renderDelta > renderInterval) {
-        renderFlag = now - (renderDelta % renderInterval);
-        update(delta / 1000);
-        render();
-    }
-    // only run the updatedBoard 42 FPS
-    updateDelta = now - updateFlag;
-    if (updateDelta > updateInterval) {
-        updateFlag = now - (updateDelta % updateInterval);
-        client.emit('update', player);
-    }
-}
+	requestAnimationFrame(animate);
+	now = Date.now();
+	delta = now - then;
+	update(delta / 1000);
+	render();
+	then = now;
 
+	elapsed = now - startTime;
+	if (elapsed > fpsInterval) {
+		startTime = now - (elapsed % fpsInterval);
+		client.emit('update', player);
+	}
+}
 
 // Cross-browser support for requestAnimationFrame
 var w = window;

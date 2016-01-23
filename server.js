@@ -11,41 +11,70 @@ app.use(express.static(__dirname));
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
+//
+// Array.prototype.remove = function() {
+//     var what, a = arguments, L = a.length, ax;
+//     while (L && this.length) {
+//         what = a[--L];
+//         while ((ax = this.indexOf(what)) !== -1) {
+//             this.splice(ax, 1);
+//         }
+//     }
+//     return this;
+// };
 
-Array.prototype.remove = function() {
-    var what, a = arguments, L = a.length, ax;
-    while (L && this.length) {
-        what = a[--L];
-        while ((ax = this.indexOf(what)) !== -1) {
-            this.splice(ax, 1);
-        }
-    }
-    return this;
-};
-
-var server_GB = {
-    clients: {},
-    active : []
+//Game information
+var serverGameBoard = {
+    sharks: {},
+    minnows: {}
 }
 
-io.on('connection', function(client) {
-    client.userid = UUID();
-    server_GB.active.push(client.userid);
-    console.log('active clients: ' + server_GB.active.length);
-    // give client their ID
+var gameRound = 0;
 
-    io.emit('onconnected', { id: client.userid } );
-    client.on('update', function(player) {
-        server_GB.clients[player.id] = player;
-        io.emit('board state', server_GB);
+io.on('connection', function(client) {
+    var player = {};
+    player.id = UUID();
+    // determine if client will be shark or minnow
+    if (!gameRound && !Object.keys(serverGameBoard.sharks).length) {
+      player.state="shark"
+    } else {
+      player.state="minnow"
+    }
+    addPlayer(player);
+    logClients();
+    //send client data
+    io.emit('onconnected', player );
+    client.on('update', function(client) {
+        //add client to appropriate objects
+        console.log(client)
+        addPlayer(client);
+        io.emit('board state', serverGameBoard);
     })
 
     client.on('disconnect', function() {
-        server_GB.active.remove(client.userid);
-        console.log('active clients: ' + server_GB.active.length);
+        if(client.state == "shark") {
+          serverGameBoard.sharks[client.userid] = null;
+        } else {
+          serverGameBoard.minnows[client.userid] = null;
+        }
+        logClients();
     });
 });
 
+var addPlayer = function(client) {
+  console.log(client);
+  if(client.state == "shark") {
+    serverGameBoard.sharks[client.id] = client;
+  } else {
+    serverGameBoard.minnows[client.id] = client;
+  }
+}
+
+var logClients = function() {
+  console.log("Logging players");
+  console.log('active minnows: ' + JSON.stringify(serverGameBoard.minnows));
+  console.log('active sharks: ' + JSON.stringify(serverGameBoard.sharks));
+}
 
 http.listen(port, function() {
     console.log("[ SERVER ] Hosting server on port " + port);
