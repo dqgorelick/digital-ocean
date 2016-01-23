@@ -54,7 +54,6 @@ var shark = {
 var minnow = {
 	speed: 256
 };
-var minnowsCaught = 0;
 
 // Handle keyboard controls
 var keysDown = {};
@@ -143,7 +142,8 @@ var update = function (modifier) {
 		&& minnow.y <= (shark.y + 32)
 	) {
 		++minnowsCaught;
-		reset();
+
+		// reset();
 	}
 	player.x = shark.x;
 	player.y = shark.y;

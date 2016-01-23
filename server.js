@@ -25,55 +25,54 @@ app.get('/', function(req, res) {
 
 //Game information
 var serverGameBoard = {
-    sharks: {},
-    minnows: {}
-}
+  clients: {}
+};
 
+var sharkCount = 0;
 var gameRound = 0;
 
 io.on('connection', function(client) {
-    var player = {};
-    player.id = UUID();
+    client.id = UUID();
     // determine if client will be shark or minnow
-    if (!gameRound && !Object.keys(serverGameBoard.sharks).length) {
-      player.state="shark"
+    if (!gameRound && !sharkCount) {
+      client.state="shark"
+      ++sharkCount;
     } else {
-      player.state="minnow"
+      client.state="minnow"
     }
-    addPlayer(player);
-    logClients();
+    updatePlayer(client.id, client.state, 0);
     //send client data
-    io.emit('onconnected', player );
+    io.emit('onconnected', {id: client.id, state: client.state, minnowsCaught: 0});
     client.on('update', function(client) {
         //add client to appropriate objects
-        console.log(client)
-        addPlayer(client);
+        updatePlayer(client.id, client.state, client.minnowsCaught);
         io.emit('board state', serverGameBoard);
     })
 
     client.on('disconnect', function() {
         if(client.state == "shark") {
-          serverGameBoard.sharks[client.userid] = null;
-        } else {
-          serverGameBoard.minnows[client.userid] = null;
+          --sharkCount;
         }
-        logClients();
+        updatePlayer(client.id, null, 0);
     });
 });
 
-var addPlayer = function(client) {
-  console.log(client);
-  if(client.state == "shark") {
-    serverGameBoard.sharks[client.id] = client;
+var updatePlayer = function(id, state, minnowsCaught) {
+  if(state) {
+    if(!serverGameBoard.clients[id]) {
+      serverGameBoard.clients[id] = {};
+      serverGameBoard.clients[id].state = state;
+    }
+    serverGameBoard.clients[id].minnowsCaught = minnowsCaught;
   } else {
-    serverGameBoard.minnows[client.id] = client;
+    serverGameBoard.clients[id] = undefined;
   }
+  logClients();
 }
 
 var logClients = function() {
   console.log("Logging players");
-  console.log('active minnows: ' + JSON.stringify(serverGameBoard.minnows));
-  console.log('active sharks: ' + JSON.stringify(serverGameBoard.sharks));
+  console.log('active players: ' + JSON.stringify(serverGameBoard.clients));
 }
 
 http.listen(port, function() {
