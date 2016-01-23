@@ -90,7 +90,7 @@ function handleMotionEvent(event) {
     hero.z += z;
 }
 
-// addEventListener("devicemotion", handleMotionEvent, true);
+addEventListener("devicemotion", handleMotionEvent, true);
 
 // Reset the game when the player catches a monster
 var reset = function () {
