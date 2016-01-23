@@ -29,7 +29,7 @@ var bgImage = new Image();
 bgImage.onload = function() {
     bgReady = true;
 };
-bgImage.src = "images/background.png";
+bgImage.src = "/images/background.png";
 
 // Hero image
 var heroReady = false;
@@ -37,7 +37,7 @@ var heroImage = new Image();
 heroImage.onload = function() {
     heroReady = true;
 };
-heroImage.src = "images/hero.png";
+heroImage.src = "/images/hero.png";
 
 // Monster image
 var monsterReady = false;
@@ -45,7 +45,7 @@ var monsterImage = new Image();
 monsterImage.onload = function() {
     monsterReady = true;
 };
-monsterImage.src = "images/monster.png";
+monsterImage.src = "/images/monster.png";
 
 // Game objects
 var hero = {
@@ -57,45 +57,53 @@ var monstersCaught = 0;
 // Handle keyboard controls
 var keysDown = {};
 
-addEventListener("keydown", function(e) {
-    keysDown[e.keyCode] = true;
-}, false);
+// Username and controls flag
+var username = document.getElementById("username").innerHTML;
+var controls = document.getElementById("controls").innerHTML;
 
-addEventListener("keyup", function(e) {
-    delete keysDown[e.keyCode];
-}, false);
+if(controls === "keyboard"){
+	addEventListener("keydown", function(e) {
+	    keysDown[e.keyCode] = true;
+	}, false);
 
-document.getElementById("up").addEventListener("touchstart", function() {
-    keysDown[38] = true;
-}, false);
+	addEventListener("keyup", function(e) {
+	    delete keysDown[e.keyCode];
+	}, false);
+}
 
-document.getElementById("up").addEventListener("touchend", function() {
-    delete keysDown[38];
-}, false);
+if(controls === "joystick"){
+	document.getElementById("up").addEventListener("touchstart", function() {
+	    keysDown[38] = true;
+	}, false);
 
-document.getElementById("left").addEventListener("touchstart", function() {
-    keysDown[37] = true;
-}, false);
+	document.getElementById("up").addEventListener("touchend", function() {
+	    delete keysDown[38];
+	}, false);
 
-document.getElementById("left").addEventListener("touchend", function() {
-    delete keysDown[37];
-}, false);
+	document.getElementById("left").addEventListener("touchstart", function() {
+	    keysDown[37] = true;
+	}, false);
 
-document.getElementById("right").addEventListener("touchstart", function() {
-    keysDown[39] = true;
-}, false);
+	document.getElementById("left").addEventListener("touchend", function() {
+	    delete keysDown[37];
+	}, false);
 
-document.getElementById("right").addEventListener("touchend", function() {
-    delete keysDown[39];
-}, false);
+	document.getElementById("right").addEventListener("touchstart", function() {
+	    keysDown[39] = true;
+	}, false);
 
-document.getElementById("down").addEventListener("touchstart", function() {
-    keysDown[40] = true;
-}, false);
+	document.getElementById("right").addEventListener("touchend", function() {
+	    delete keysDown[39];
+	}, false);
 
-document.getElementById("down").addEventListener("touchend", function() {
-    delete keysDown[40];
-}, false);
+	document.getElementById("down").addEventListener("touchstart", function() {
+	    keysDown[40] = true;
+	}, false);
+
+	document.getElementById("down").addEventListener("touchend", function() {
+	    delete keysDown[40];
+	}, false);
+}
 
 function handleMotionEvent(event) {
     var x = event.accelerationIncludingGravity.x;
@@ -106,7 +114,9 @@ function handleMotionEvent(event) {
     hero.z += z;
 }
 
-// addEventListener("devicemotion", handleMotionEvent, true);
+if(controls === "tilt"){
+	addEventListener("devicemotion", handleMotionEvent, true);
+}
 
 // Reset the game when the player catches a monster
 var reset = function() {
