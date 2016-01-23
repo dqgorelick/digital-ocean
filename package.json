@@ -1,0 +1,35 @@
+{
+  "name": "digital-ocean",
+  "version": "1.0.0",
+  "description": "Sharks and minnows meets a maze meets Mario Party meets socket.io",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dqgorelick/digital-ocean.git"
+  },
+  "keywords": [
+    "socket.io",
+    "digital-ocean",
+    "sharks",
+    "minnows",
+    "mazes",
+    "mario",
+    "party"
+  ],
+  "author": "DQG HL CD CSS RB KB",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dqgorelick/digital-ocean/issues"
+  },
+  "homepage": "https://github.com/dqgorelick/digital-ocean#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "gulp": "^3.9.0",
+    "gulp-jshint": "^2.0.0",
+    "gulp-nodemon": "^2.0.6",
+    "gulp-sass": "^2.1.1"
+  }
+}
