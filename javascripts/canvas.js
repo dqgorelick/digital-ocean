@@ -47,6 +47,14 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
+document.getElementById("up").addEventListener("mousedown", function(){
+	keysDown[38] = true;
+}, false);
+
+document.getElementById("up").addEventListener("mouseup", function(){
+	delete keysDown[38];
+}, false);
+
 // Reset the game when the player catches a monster
 var reset = function () {
 	hero.x = canvas.width / 2;
