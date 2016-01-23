@@ -15,23 +15,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/index.html');
-});
-
-app.get('/canvas/:username/:controls', function(req, res) {
-	var username = req.params.username;
-	var controls = req.params.controls;
-	res.render('canvas', {username: username, controls: controls});
-});
-
-app.get('/join', function(req, res) {
 	res.render('join');
 });
 
-app.post('/join', function(req, res) {
+app.post('/', function(req, res) {
 	var username = req.body.username;
 	var controls = req.body.controls;
-	res.redirect('/canvas/' + username + '/' + controls);
+	res.redirect('/game/' + username + '/' + controls);
+});
+
+app.get('/game/:username/:controls', function(req, res) {
+	var username = req.params.username;
+	var controls = req.params.controls;
+	res.render('game', {username: username, controls: controls});
 });
 
 Array.prototype.remove = function() {
