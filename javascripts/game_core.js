@@ -8,7 +8,7 @@ Game = function () {
     }
     this.safezoneWidth = 50;
     this.waiting = true;
-    this.timer = 10;
+    this.timer = 30;
     this.status = null;
 }
 
@@ -16,32 +16,63 @@ Game.prototype.Collisions = function(player) {
     //Left wall.
     var width = player.width();
     var height = player.height();
+    var leftToRight = true;
     if(player.pos.x <= 0) {
         player.pos.x = 0;
     }
     if(player.fishType === "shark" && this.gameRound%2 === 1 && player.pos.x <= this.safezoneWidth) {
         player.pos.x = this.safezoneWidth;
     }
-    if(this.waiting && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x <= this.safezoneWidth - width) {
-        console.log("safe");
-    }
-    if(player.safe && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x >= this.safezoneWidth - width) {
+
+
+    // Fish getting to the goal
+    // FROM LEFT TO RIGHT
+    if(leftToRight && this.waiting && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x >= this.safezoneWidth - width) {
         player.pos.x = this.safezoneWidth - width;
     }
+
+    if(leftToRight && player.fishType === "minnow" && this.gameRound%2 === 0 && player.pos.x >= canvas.width - this.safezoneWidth){
+        player.isSafe = true;
+        leftToRight = false;
+    }
+
+    if(!(leftToRight) && this.gameRound%2 === 0 && player.pos.x <= this.safezoneWidth){
+    }
+
+    // // FROM RIGHT TO LEFT
+    // if(!leftToRight && this.waiting && player.fishType === "minnow" && this.gameRound%2 === 0 && player.pos.x <= canvas.width - this.safezoneWidth) {
+    //     player.pos.x = canvas.width - this.safezoneWidth;
+    // }
+
+    // if(!leftToRight && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x <= this.safezoneWidth - width){
+    //     player.isSafe = true;
+    //     leftToRight = true;
+    // }
+    // halfway
+    // if (player.fishType === "minnow" && this.gameRound%2 === 0 && player.pos.x >= canvas.width/2) {
+    //     player.checkpoint = true;
+    // }
+
+    // if(player.checkpoint && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x >= this.safezoneWidth - width) {
+    //     player.pos.x = this.safezoneWidth - width;
+    // }
+    // Fish getting to the goal
+    // if(this.waiting && player.fishType === "minnow" && this.gameRound%2 === 0 && player.pos.x >= canvas.width - this.safezoneWidth) {
+    //     // player.safe = true;
+    // }
+    // if(player.fishType === "minnow" && this.gameRound%2 === 0 && player.pos.x <= canvas.width - this.safezoneWidth) {
+    //     player.pos.x = canvas.width - this.safezoneWidth;
+    // }
+
+
     //Right wall
     if(player.pos.x + width >= canvas.width) {
         player.pos.x = canvas.width - width ;
     }
-    if(player.fishType === "shark" && this.gameRound%2 === 0 && player.pos.x >= canvas.width - this.safezoneWidth - width) {
-        player.pos.x = canvas.width - this.safezoneWidth - width ;
+    if(player.fishType === "shark" && this.gameRound%2 === 0 && player.pos.x >= canvas.width - width) {
+        player.pos.x = canvas.width -  width ;
     }
-    if(this.waiting && player.fishType === "minnow" && this.gameRound%2 === 0 && player.pos.x >= canvas.width - this.safezoneWidth) {
-        // player.safe = true;
-    }
-    if(player.safe && player.fishType === "minnow" && this.gameRound%2 === 0 && player.pos.x <= canvas.width - this.safezoneWidth) {
-        player.pos.x = canvas.width - this.safezoneWidth;
-        console.log("safe");
-    }
+
     //Roof wall.
     if(player.pos.y <= 0) {
         player.pos.y = 0;
@@ -97,7 +128,16 @@ Game.prototype.Spawn = function() {
 }
 
 Game.prototype.Reset = function(player){
+    // clear out all of the dead fish, make them spawn as sharks
+    // reset the timer
+    // make sure the minnows are in the gated area
+}
 
+Game.prototype.Respawn = function(player) {
+    player.fishType = "shark";
+    player.pos.y = Math.floor(Math.random()*(canvas.height - sharkHeight));
+    player.pos.x = Math.floor((canvas.width/2 + 150) - Math.random()*300);
+    player.isAlive = true;
 }
 
 Game.prototype.Counters = function(player) {

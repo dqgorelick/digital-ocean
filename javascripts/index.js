@@ -127,6 +127,7 @@ var sizeX = 50;
 var sizeY = 50;
 var updateFlag = false;
 
+var deadPlayers = [];
 function GameTick(elapsed) {
   if (updateFlag) {
     client.emit('client update', player);
@@ -152,60 +153,59 @@ function GameTick(elapsed) {
 
   // Draw safe zones
   if (engine.gameRound % 2 === 0) {
-    ctx.fillStyle = ctx.fillStyle = "rgba(49, 129, 49, 0.4)";
-    ctx.fillRect(engine.canvas.width-engine.safezoneWidth,0,engine.canvas.width,engine.canvas.height);
+    // ctx.fillStyle = ctx.fillStyle = "rgba(49, 129, 49, 0.4)";
+    // ctx.fillRect(engine.canvas.width-engine.safezoneWidth,0,engine.canvas.width,engine.canvas.height);
+    console.log("nothing");
   } else {
     ctx.fillStyle = ctx.fillStyle = "rgba(49, 129, 49, 0.4)";
     ctx.fillRect(0,0,engine.safezoneWidth,engine.canvas.height);
   }
 
   // Draw player
-  ctx.fillStyle = 'white';
-  ctx.font = "12px Helvetica";
-  if(player.fishType === "shark"){
-    ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
-    ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
-  } else {
-    ctx.drawImage(images.minnow, player.pos.x, player.pos.y, 25, 14);
-    ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
+  if(player.isAlive) {
+    ctx.fillStyle = 'white';
+    ctx.font = "12px Helvetica";
+    if(player.fishType === "shark"){
+      ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
+      ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
+    } else {
+      ctx.drawImage(images.minnow, player.pos.x, player.pos.y, 25, 14);
+      ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
+    }
   }
   ctx.drawImage(images.arrow, player.pos.x + 15, player.pos.y - 10, 14, 7);
 
   // Draw players
   for (var entity in players) {
     if (players.hasOwnProperty(entity)) {
+      var tempID = entity;
       entity = players[entity];
       var x_coord = entity.pos.x;
       var y_coord = entity.pos.y;
       ctx.fillStyle = 'white';
       ctx.font = "12px Helvetica";
-      if(entity.fishType === "shark"){
-        ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
-        ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
+        // if(deadPlayers[i]) {
+      if(deadPlayers.indexOf(tempID) !== -1) {
+        ctx.fillText("(✖╭╮✖)", x_coord - 5, y_coord + 20);
       } else {
-        ctx.drawImage(images.minnow, x_coord, y_coord, 25, 14);
-        ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
-      }
-      if(player.id != entity.id){
-        if(engine.isEaten(player, entity) && (player.fishType != entity.fishType)){
-          if(player.fishType === "minnow"){
-            ctx.fillText("(✖╭╮✖)", player.pos.x, player.pos.y + 53);
-            player.isAlive = false;
-          }
-          if(entity.fishType === "minnow"){
-            ctx.fillText("(✖╭╮✖)", x_coord + 5, y_coord + 53);
-            entity.isAlive = false;
-          }
-          if(entity.isAlive === false){
-            // ctx.drawImage(images.shark, x_coord + 5, y_coord + 53);
+        if(entity.fishType === "shark"){
+          ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
+          ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
+        } else {
+          ctx.drawImage(images.minnow, x_coord, y_coord, 25, 14);
+          ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
+        }
+        if(player.id != entity.id){
+          if(engine.isEaten(player, entity) && (player.fishType != entity.fishType)){
+            if(player.fishType === "minnow"){
+              ctx.fillText("(✖╭╮✖)", player.pos.x - 5, player.pos.y + 20);
+              player.isAlive = false;
+            }
           }
         }
       }
     }
   }
-
-  // Draw HUD
-
 }
 
 var collisionDetected = function(otherObject) {
@@ -214,6 +214,8 @@ var collisionDetected = function(otherObject) {
     otherObject.pos.y <= (player.pos.y + 32) &&
     player.pos.y <= (otherObject.pos.y + 32))
 }
+
+var waitingFlag = true;
 
 $(document).ready(function() {
   canvas = document.getElementById("canvas");
@@ -250,13 +252,13 @@ $(document).ready(function() {
         if (entity.id !== player.id) {
           players[entity.id] = entity;
         }
-        for (var i = 0; i < deleted.length; i++) {
-          if (deleted[i] === entity.id) {
-            delete players[playerID];
-            console.log("deleting ID", playerID);
-            console.log("deleted", players[playerID]);
-          }
-        }
+        // for (var i = 0; i < deleted.length; i++) {
+        //   if (deleted[i] === entity.id) {
+        //     delete players[playerID];
+        //     console.log("deleting ID", playerID);
+        //     console.log("deleted", players[playerID]);
+        //   }
+        // }
       }
     }
   })
@@ -268,13 +270,22 @@ $(document).ready(function() {
     engine.sharkCount = boardState.sharkCount;
     engine.timer = boardState.timer;
     engine.status = boardState.status;
+    // engine.waiting = boardState.waiting;
     updateStatus();
-    if (engine.timer === 0 && engine.waiting) {
+    if (engine.timer > 0) {
+      engine.waiting = true;
+      waitingFlag = true;
+    }
+    if (engine.timer === 0 && waitingFlag) {
       engine.waiting = false;
+      waitingFlag = false;
       engine.gameRound++;
       console.log("GAME START!");
     }
   })
+  client.on('dead players', function(deadies){
+    deadPlayers = deadies;
+  });
 })
 
 function updateStatus() {

@@ -4,9 +4,9 @@ function Player (id, pos, fishType, username) {
     this.speed = 384;
     this.fishType = fishType;
     this.username = username;
-    this.safe = false;
     this.isAlive = true;
-
+    this.isSafe = false;
+    this.checkpoint = false;
     this.width = function() {
         if (this.fishType == "shark") {
             return 50;

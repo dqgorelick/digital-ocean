@@ -40,7 +40,7 @@ Game = function () {
     }
     this.safezoneWidth = 50;
     this.waiting = true;
-    this.timer = 10;
+    this.timer = 30;
     this.status = null;
 }
 
@@ -50,15 +50,23 @@ var board = new Game();
 
 io.on('connection', function(socket) {
     board.users++;
-    console.log("active users", board.users);
     update();
     clientID = socket.id;
-    console.log("adding", clientID);
-    // console.log(clientID);
+
     io.emit('onconnected', clients);
     io.emit('user-id', clientID);
     socket.on('client update', function(update) {
         clients[clientID] = update;
+        if (!board.waiting && clients[clientID].isSafe && safePlayers.indexOf(clientID) === -1) {
+            safePlayers.push(clientID);
+            // remaining--;
+        }
+        if(!clients[clientID].isAlive && deadPlayers.indexOf(clientID) === -1) {
+            console.log(clientID + " added to dead fish array")
+            deadPlayers.push(clientID);
+            remaining--;
+            // allPlayers.
+        }
         io.emit('server update', clients)
     })
     socket.on('join', function(player){
@@ -70,20 +78,35 @@ io.on('connection', function(socket) {
             console.log("minnow spawns")
             board.minnowCount++;
         }
+        // allPlayers.push({username: player.username, id: player.id});
+        // console.log(allPlayers);
     })
     socket.on('disconnect', function() {
         io.emit('remove player', clientID);
         console.log("removing", clientID);
         delete clients.clientID;
         board.users--;
-        console.log("active users", board.users);
     })
 });
+
+var safePlayers = [];
+var remaining = 9999;
+// fish dying logic
+var deadPlayers = [];
+var allPlayers = [];
+
+var nextRound = false;
+if (nextRound) {
+    nextRound = false;
+    board.Reset();
+}
+
 
 var nextSecond = true;
 var startCountdown = false;
 var countingDown = false;
 var roundBegin = false;
+var toNextRound = true;
 function update() {
     board.status = "Waiting for a minnow to join to start the round!";
     if(board.minnowCount > 0){
@@ -99,13 +122,15 @@ function update() {
             nextSecond = false;
             setTimeout(function(){
                 nextSecond = true;
-                console.log(board.timer);
             },1000);
             if (board.timer === 0 && board.waiting) {
                 countingDown = false;
                 startCountdown = false;
                 board.waiting = false;
                 roundBegin = true;
+                toNextRound = true;
+                remaining = board.minnowCount;
+                console.log(remaining, " IS REMAINING");
                 board.gameRound++;
             }
         }
@@ -113,8 +138,23 @@ function update() {
     if (roundBegin) {
         board.status = "Round " + board.gameRound + " begin!";
     }
+    if(remaining === 0 && toNextRound) {
+        // toNextRound = false;
+        board.status = "ROUND " + board.gameRound  + " IS OVER!";
+        board.waiting = true;
+        // roundBegin = false;
+        // board.timer = 3;
+        // countingDown = true;
+        // for(var i = 0; i < safePlayers.length ; i++) {
+            // this.sharkCount = 0;
+            // this.minnowCount = 0;
+
+        // }
+    }
     setTimeout(update, 1000/5);
     io.emit('status update', board);
+    io.emit('dead players', deadPlayers);
+    io.emit('all players', allPlayers);
 }
 
 http.listen(port, function() {
