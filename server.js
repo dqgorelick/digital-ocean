@@ -40,7 +40,7 @@ Game = function () {
     }
     this.safezoneWidth = 50;
     this.waiting = true;
-    this.timer = 30;
+    this.timer = 4;
     this.status = null;
 }
 
@@ -62,28 +62,31 @@ io.on('connection', function(socket) {
             // remaining--;
         }
         if(!clients[clientID].isAlive && deadPlayers.indexOf(clientID) === -1) {
-            console.log(clientID + " added to dead fish array")
+            // console.log(clientID + " added to dead fish array")
             deadPlayers.push(clientID);
             remaining--;
-            // allPlayers.
+            // console.log("before", allPlayers);
+            allPlayers.splice(allPlayers.indexOf(clients[clientID].username),1);
+            // console.log("after", allPlayers);
         }
         io.emit('server update', clients)
     })
     socket.on('join', function(player){
         if(player.fishType == "shark") {
-            console.log("shark spawns");
+            // console.log("shark spawns");
             board.sharkCount++;
         }
         if(player.fishType == "minnow") {
-            console.log("minnow spawns")
+            // console.log("minnow spawns")
             board.minnowCount++;
+            // console.log("pushed " + player.username + " to the list");
+            allPlayers.push(player.username);
         }
-        // allPlayers.push({username: player.username, id: player.id});
-        // console.log(allPlayers);
+
     })
     socket.on('disconnect', function() {
         io.emit('remove player', clientID);
-        console.log("removing", clientID);
+        // console.log("removing", clientID);
         delete clients.clientID;
         board.users--;
     })
@@ -130,17 +133,18 @@ function update() {
                 roundBegin = true;
                 toNextRound = true;
                 remaining = board.minnowCount;
-                console.log(remaining, " IS REMAINING");
+                // console.log(remaining, " IS REMAINING");
                 board.gameRound++;
             }
         }
     }
     if (roundBegin) {
-        board.status = "Round " + board.gameRound + " begin!";
+        board.status = "It's a digital ocean brawl!";
     }
-    if(remaining === 0 && toNextRound) {
+    if(remaining === 1 && toNextRound) {
         // toNextRound = false;
-        board.status = "ROUND " + board.gameRound  + " IS OVER!";
+        // console.log("last one is ", allPlayers);
+        board.status = "FIGHT TO THE DEATH";
         board.waiting = true;
         // roundBegin = false;
         // board.timer = 3;
@@ -151,14 +155,18 @@ function update() {
 
         // }
     }
+    if (allPlayers.length === 1) {
+        board.status = "Last one standing: " + allPlayers[0];
+    }
     setTimeout(update, 1000/5);
     io.emit('status update', board);
     io.emit('dead players', deadPlayers);
     io.emit('all players', allPlayers);
+
 }
 
 http.listen(port, function() {
-    console.log("[ SERVER ] Hosting server on port " + port);
+    // console.log("[ SERVER ] Hosting server on port " + port);
 });
 
 

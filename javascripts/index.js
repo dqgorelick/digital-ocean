@@ -155,7 +155,7 @@ function GameTick(elapsed) {
   if (engine.gameRound % 2 === 0) {
     // ctx.fillStyle = ctx.fillStyle = "rgba(49, 129, 49, 0.4)";
     // ctx.fillRect(engine.canvas.width-engine.safezoneWidth,0,engine.canvas.width,engine.canvas.height);
-    console.log("nothing");
+
   } else {
     ctx.fillStyle = ctx.fillStyle = "rgba(49, 129, 49, 0.4)";
     ctx.fillRect(0,0,engine.safezoneWidth,engine.canvas.height);
@@ -225,17 +225,17 @@ $(document).ready(function() {
   var firstload2 = true;
   client.on('onconnected', function(updatedPositions) {
     if(firstload1) {
-      console.log("connected");
-      // console.log(updatedPositions);
+
+      //
       // players = updatedPositions;
       firstload1 = false;
     }
   })
   client.on('user-id', function(userId) {
     if(firstload2) {
-      console.log("user-id")
+
       var initialConfig = engine.Spawn();
-      console.log(initialConfig);
+
       player = new Player(userId, initialConfig.pos, initialConfig.fishType, username);
       engine.Counters(player);
       GameLoopManager.run(GameTick);
@@ -255,8 +255,8 @@ $(document).ready(function() {
         // for (var i = 0; i < deleted.length; i++) {
         //   if (deleted[i] === entity.id) {
         //     delete players[playerID];
-        //     console.log("deleting ID", playerID);
-        //     console.log("deleted", players[playerID]);
+        //
+        //
         //   }
         // }
       }
@@ -280,12 +280,23 @@ $(document).ready(function() {
       engine.waiting = false;
       waitingFlag = false;
       engine.gameRound++;
-      console.log("GAME START!");
+
     }
   })
   client.on('dead players', function(deadies){
     deadPlayers = deadies;
   });
+  client.on('all players', function(everyone) {
+
+    var live = ""
+    for (var i = 0; i < everyone.length; i++) {
+      live += everyone[i];
+      live += "<br>";
+      if(i === everyone.length) {
+          document.getElementById("alive").html(live);
+      }
+    }
+  })
 })
 
 function updateStatus() {
