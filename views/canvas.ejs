@@ -2,8 +2,9 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Simple Canvas Game</title>
-		<script src="bower_components/jquery/dist/jquery.min.js"></script>
+		<title>Try the game</title>
+        <link rel="stylesheet" href="/dist/index.css">
+		<script src="/bower_components/jquery/dist/jquery.min.js"></script>
 		<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
 	</head>
 	<body>
@@ -15,6 +16,8 @@
 		<br>
 		<button id="down">down</button>
 		<br>
-		<script src="javascripts/canvas.js"></script>
+		<p id="username"><%=username%></p>
+		<p id="controls"><%=controls%></p>
+		<script src="/javascripts/canvas.js"></script>
 	</body>
 </html>
