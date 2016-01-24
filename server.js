@@ -42,7 +42,6 @@ Game = function () {
     this.waiting = true;
     this.timer = 10;
     this.status = null;
-    this.isAlive = true;
 }
 
 //Game information
