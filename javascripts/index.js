@@ -132,6 +132,7 @@ function GameTick(elapsed) {
     client.emit('client update', player);
   }
   updateFlag = !updateFlag;
+  fps.update(elapsed);
   if (38 in keysDown && player.isAlive) { // Player holding up
     player.pos.y -= player.speed * elapsed;
   }
@@ -189,11 +190,11 @@ function GameTick(elapsed) {
       if(entity.id != player.id){
         if(collisionDetected(entity) && (entity.fishType != player.fishType)){
           if(player.fishType === "minnow"){
-            ctx.fillText("(✖╭╮✖)", player.pos.x, player.pos.y + 33);
+            ctx.fillText("(✖╭╮✖)", player.pos.x, player.pos.y + 53);
             player.isAlive = false;
           }
           if(entity.fishType === "minnow"){
-            ctx.fillText("(✖╭╮✖)", x_coord + 5, y_coord + 33);
+            ctx.fillText("(✖╭╮✖)", x_coord + 5, y_coord + 53);
             entity.isAlive = false;
           }
         }
@@ -223,6 +224,7 @@ $(document).ready(function() {
       console.log("connected");
       // console.log(updatedPositions);
       // players = updatedPositions;
+      fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
       firstload1 = false;
     }
   })
