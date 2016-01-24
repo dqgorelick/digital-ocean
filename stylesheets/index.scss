@@ -16,7 +16,7 @@ $shadow: 0 3px 2px black;
 
 // Styles
 html {
-    background-color: #eeeeee;
+    background-color: $grey;
 }
 
 body {
@@ -81,12 +81,15 @@ section.game {
     }
 }
 section.user-selection {
+
     padding: 50px 0;
     .menu {
         @include outer-container;
+        max-width: 320px;
+        border-radius: 4px;
         background-color: $lightgrey;
         box-shadow: $shadow;
-        margin-top: 10px;
+        margin-top: 50px;
         margin-left: auto;
         margin-right: auto;
         display: block;

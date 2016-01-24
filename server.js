@@ -40,7 +40,7 @@ Game = function () {
     }
     this.safezoneWidth = 50;
     this.waiting = true;
-    this.timer = 3;
+    this.timer = 10;
     this.status = null;
 }
 
