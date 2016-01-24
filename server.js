@@ -34,11 +34,13 @@ Game = function () {
     this.sharkCount = 0;
     this.minnowCount = 0;
     this.gameRound = 0;
-    this.clients = clients;
     this.canvas = {
         width: 750,
         height: 450
     }
+    this.safezoneWidth = 50;
+    this.waiting = true;
+    this.timer = 3;
 }
 
 //Game information
@@ -58,6 +60,16 @@ io.on('connection', function(socket) {
         clients[clientID] = update;
         io.emit('server update', clients)
     })
+    socket.on('join', function(player){
+        if(player.fishType == "shark") {
+            console.log("shark spawns");
+            board.sharkCount++;
+        }
+        if(player.fishType == "minnow") {
+            console.log("minnow spawns")
+            board.minnowCount++;
+        }
+    })
     socket.on('disconnect', function() {
         io.emit('remove player', clientID);
         console.log("removing", clientID);
@@ -67,8 +79,28 @@ io.on('connection', function(socket) {
     })
 });
 
+var nextSecond = false;
+var startCountdown = false;
 function update() {
     io.emit('status update', board);
+    if(board.minnowCount > 0){
+        startCountdown = true;
+    }
+    if (startCountdown) {
+        if(nextSecond && board.timer > 0) {
+            board.timer--;
+            nextSecond = false;
+            setTimeout(function(){
+                nextSecond = true;
+                console.log(board.timer);
+            },1000);
+            if (board.timer === 0 && board.waiting) {
+                startCountdown = false;
+                board.waiting = false;
+                board.gameRound++;
+            }
+        }
+    }
     setTimeout(update, 1000/5);
 }
 

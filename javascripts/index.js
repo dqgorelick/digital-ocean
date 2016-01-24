@@ -230,8 +230,10 @@ $(document).ready(function() {
       var initialConfig = engine.Spawn();
       console.log(initialConfig);
       player = new Player(userId, initialConfig.pos, initialConfig.fishType, username);
+      engine.Counters(player);
       GameLoopManager.run(GameTick);
       client.emit('client update', player);
+      client.emit('join', player);
       firstload2 = false;
     }
   })
@@ -257,7 +259,13 @@ $(document).ready(function() {
     deleted.push(playerID);
   })
   client.on('status update', function(boardState) {
-    // console.log(boardState);
-    // console.log(players);
+    engine.minnowCount = boardState.minnowCount;
+    engine.sharkCount = boardState.sharkCount;
+    engine.timer = boardState.timer;
+    if (engine.timer === 0 && engine.waiting) {
+      engine.waiting = false;
+      engine.gameRound++;
+      console.log("GAME START!");
+    }
   })
 })

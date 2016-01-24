@@ -1,13 +1,14 @@
 Game = function () {
     this.sharkCount = 0;
     this.minnowCount = 0;
-    this.gameRound = 0;
+    this.gameRound = 1;
     this.canvas = {
         width: 750,
         height: 450
     }
     this.safezoneWidth = 50;
     this.waiting = true;
+    this.timer = 20;
 }
 
 Game.prototype.Collisions = function(player) {
@@ -20,11 +21,11 @@ Game.prototype.Collisions = function(player) {
     if(player.fishType === "shark" && this.gameRound%2 === 1 && player.pos.x <= this.safezoneWidth) {
         player.pos.x = this.safezoneWidth;
     }
-    if(!player.safe && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x <= this.safezoneWidth) {
+    if(!player.safe && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x <= this.safezoneWidth - width) {
         player.safe = true;
     }
-    if(player.safe && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x >= this.safezoneWidth) {
-        player.pos.x = this.safezoneWidth;
+    if(player.safe && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x >= this.safezoneWidth - width) {
+        player.pos.x = this.safezoneWidth - width;
     }
     //Right wall
     if(player.pos.x + width >= canvas.width) {
@@ -57,9 +58,8 @@ Game.prototype.Spawn = function() {
     var sharkHeight = 25;
     var sharkWidth = 50;
     var pos = {};
-    if (this.sharkCount > 0) {
+    if (this.sharkCount == 0) {
         var type = "shark"
-        this.sharkCount++;
         pos.y = Math.floor(Math.random()*(canvas.height - sharkHeight));
         pos.x = Math.floor((canvas.width/2 + 150) - Math.random()*300);
         return initialConfig = {fishType: type, pos: {x: pos.x, y: pos.y}};
@@ -76,17 +76,10 @@ Game.prototype.Spawn = function() {
     }
 }
 
-
-// var clients = board.clients;
-// for (var currentPlayer in board.clients) {
-//   var currentPlayerObj = clients[currentPlayer];
-//   if (clients.hasOwnProperty(currentPlayer) && currentPlayerObj.id != player.id && currentPlayerObj.state == "shark") {
-//     if (collisionDetected(currentPlayerObj)) {
-//       if (currentPlayerObj.state == "shark") {
-//         currentPlayerObj.minnowsCaught++;
-//       } else {
-//         currentPlayerObj.state = "minnow";
-//       }
-//     }
-//   }
-// }
+Game.prototype.Counters = function(player) {
+    if (player.fishType == "shark") {
+        this.sharkCount++;
+    } else if (player.fishType == "minnow") {
+        this.minnowCount++;
+    }
+}
