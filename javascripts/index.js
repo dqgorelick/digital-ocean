@@ -132,7 +132,6 @@ function GameTick(elapsed) {
     client.emit('client update', player);
   }
   updateFlag = !updateFlag;
-  fps.update(elapsed);
   if (38 in keysDown && player.isAlive) { // Player holding up
     player.pos.y -= player.speed * elapsed;
   }
@@ -224,7 +223,6 @@ $(document).ready(function() {
       console.log("connected");
       // console.log(updatedPositions);
       // players = updatedPositions;
-      fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
       firstload1 = false;
     }
   })
