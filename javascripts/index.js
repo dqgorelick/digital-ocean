@@ -59,12 +59,6 @@ client.on('updatedBoard', function(updatedBoard) {
   board = updatedBoard;
 });
 
-// Reset the game when game ends
-var reset = function() {
-  player.physics.x = canvas.width / 2;
-  player.physics.y = canvas.height / 2;
-};
-
 var keysDown = {};
 
 function handleMotionEvent(event) {
@@ -106,10 +100,6 @@ document.getElementById("down").addEventListener("touchend", function() {
   delete keysDown[40];
 }, false);
 
-
-
-// initialize();
-
 fps = null;
 canvas = null;
 ctx = null;
@@ -141,81 +131,50 @@ function GameTick(elapsed) {
     player.physics.x += player.physics.speed * elapsed;
   }
   var clients = board.clients;
-  for (var otherPlayer in board.clients) {
-    if (clients.hasOwnProperty(otherPlayer) && clients.state == "shark") {
-      if (collisionDetected(otherPlayer)) {
-        if (player.state == "shark") {
-          ++minnowsCaught;
+  for (var currentPlayer in board.clients) {
+    var currentPlayerObj = clients[currentPlayer];
+    if (clients.hasOwnProperty(currentPlayer) && currentPlayerObj.id != player.id && currentPlayerObj.state == "shark") {
+      if (collisionDetected(currentPlayerObj)) {
+        if (currentPlayerObj.state == "shark") {
+          currentPlayerObj.minnowsCaught++;
         } else {
-          player.state = "minnow";
+          currentPlayerObj.state = "minnow";
         }
       }
     }
   }
-  // lastX < shark.x ? images.direction.shark = 1: images.direction.shark = -1;
 
-  // --- Rendering
-
-  // Clear the screen
-  // ctx.fillStyle = "#000000";
-  // ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.save();
-  ctx.drawImage(images.background, 0, 0, 400, 400);
 
   // Render objects
   if (connection) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(images.background, 0, 0, 400, 400);
     for (var entity in board.clients) {
       if (board.clients.hasOwnProperty(entity)) {
-        var x_coord = board.clients[entity].physics.x;
-        var y_coord = board.clients[entity].physics.y;
-        ctx.drawImage(images.shark, x_coord - 25, y_coord - 25, 50, 28);
+        entity = board.clients[entity];
+        var x_coord = entity.physics.x;
+        var y_coord = entity.physics.y;
+        if(entity.state == "shark") {
+          ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
+        } else {
+          ctx.drawImage(images.minnow, x_coord, y_coord, 28, 14);
+        }
       }
     }
-    // for (var i = 0; i < board.clients.length; i++) {
-    //   var entity_id = board.clients[i].id;
-    //   var x_coord = board.clients[entity_id].physics.x;
-    //   var y_coord = board.clients[entity_id].physics.y;
-    //   // if (entity_id !== player.id) {
-    //     // ctx.fillStyle = "#ffffff";
-    //     // ctx.setTransform(1, 0, 0, 1, x_coord, y_coord); // Transform that scales circle vertically into a flat ellipse
-    //     // ctx.beginPath();
-    //     // ctx.arc(0, 0, 12, 0, 2 * Math.PI, false);
-    //     // ctx.fill();
-    //     if (en) {
-    //       ctx.drawImage(images.shark, x_coord - 25, y_coord - 25, 50, 28);
-    //     }
-    // ctx.restore();
-    // }
-    //
   }
-  // ctx.save(); // Save the entire context because we'll be setting the transform. We could just reset to identity...
-  // {
-  //     ctx.fillStyle = "#ffffff";
-  //     ctx.setTransform(1, 0, 0, 1, hero.x, hero.y); // Transform that scales circle vertically into a flat ellipse
-  //     ctx.beginPath();
-  //     ctx.arc(0, 0, 12, 0, 2 * Math.PI, false);
-  //     ctx.fill();
-  // }
-  // ctx.drawImage(images.shark, x_coord-25, y_coord-25, 50, 28);
-
-  ctx.restore();
-  // player.x = player.physics.x;
-  // player.y = player.physics.y;
-
-  // console.log(player.x,player.y);
 }
 
-var collisionDetected = function(otherPlayer) {
-  return (otherPlayer.physics.x <= (player.physics.x + 32) &&
-    player.physics.x <= (otherPlayer.physics.x + 32) &&
-    otherPlayer.physics.y <= (player.physics.y + 32) &&
-    player.physics.y <= (otherPlayer.physics.y + 32))
+var collisionDetected = function(otherObject) {
+  return (otherObject.physics.x <= (player.physics.x + 32) &&
+    player.physics.x <= (otherObject.physics.x + 32) &&
+    otherObject.physics.y <= (player.physics.y + 32) &&
+    player.physics.y <= (otherObject.physics.y + 32))
 }
 
 $(document).ready(function() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
-  //reset();
   GameLoopManager.run(GameTick);
 })
