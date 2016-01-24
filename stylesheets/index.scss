@@ -1,4 +1,6 @@
 // this is sass!
+@import "bourbon";
+@import "neat";
 
 // Google Fonts
 @import url(https://fonts.googleapis.com/css?family=Lobster|Cabin);
@@ -18,10 +20,11 @@ html {
 }
 
 body {
-  font-family: $body-font;
-  font-weight: 400;
-  color: $textcolor;
-  overflow-x: hidden;
+    margin: 0;
+    font-family: $body-font;
+    font-weight: 400;
+    color: $textcolor;
+    overflow-x: hidden;
 }
 
 h1 {
@@ -49,31 +52,36 @@ canvas {
     box-shadow: $shadow;
 }
 
-.menu {
-    background-color: $lightgrey;
-    width: 50%;
-    box-shadow: $shadow;
-    margin-top: 10px;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-}
 
-form {
-    text-align: center;
-}
 
-input {
-    background-color: $blue;
-    border-radius:4px;
-    color: $textcolor;
-    font-family: $body-font;
-    font-size: 20px;
-    text-decoration: none;
-    border:none;
-}
-input [type="submit"] {
-    font-family: $title-font;
-    font-size: 20px;
-    text-decoration: none;
+section.user-selection {
+    padding: 50px 0;
+    .menu {
+        @include outer-container;
+        background-color: $lightgrey;
+        box-shadow: $shadow;
+        margin-top: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        padding: 30px 20px;
+        form {
+            text-align: center;
+        }
+        input {
+            background-color: $blue;
+            border-radius:4px;
+            color: $textcolor;
+            font-family: $body-font;
+            padding: 10px 20px;
+            font-size: 20px;
+            text-decoration: none;
+            border:none;
+        }
+        input [type="submit"] {
+            font-family: $title-font;
+            font-size: 20px;
+            text-decoration: none;
+        }
+    }
 }

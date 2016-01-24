@@ -12,17 +12,19 @@
       <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Sharks and Minnows</h1>
-  </div>
-  <% if(controls === "joystick") { %>
-    <button id="up">up</button>
-    <button id="left">left</button>
-    <button id="right">right</button>
-    <button id="down">down</button>
-  <% } %>
-  <canvas id="canvas" width="400" height="400"></canvas>
-  <div id="fpscontainer"></div>
+  <section class="game">
+    <div class="wrap">
+      <h1>Sharks and Minnows</h1>
+    </div>
+    <% if(controls === "joystick") { %>
+      <button id="up">up</button>
+      <button id="left">left</button>
+      <button id="right">right</button>
+      <button id="down">down</button>
+    <% } %>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <div id="fpscontainer"></div>
+  </section>
   <span id="username"><%=username%></span> <span id="controls"><%=controls%></span>
   <script src="/javascripts/index.js"></script>
 </body>
