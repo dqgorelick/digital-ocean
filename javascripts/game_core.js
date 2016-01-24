@@ -53,10 +53,12 @@ Game.prototype.Collisions = function(player) {
 }
 
 Game.prototype.isEaten = function(player, enemy){
+    /*
     var widthPlayer = player.width();
     var heightPlayer = player.height();
     var widthEnemy = enemy.width();
     var heightEnemy = enemy.height();
+    */
     // collide left side
     // if(player.pos.x )
     // collide right side
