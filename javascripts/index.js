@@ -146,8 +146,6 @@ function GameTick(elapsed) {
     player.pos.x += player.speed * elapsed;
   }
   engine.Collisions(player);
-  ctx.save();
-  ctx.restore();
   // Clear canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   // Draw background
@@ -163,11 +161,8 @@ function GameTick(elapsed) {
   }
 
   // Draw player
-<<<<<<< Updated upstream
   ctx.fillStyle = 'white';
   ctx.font = "12px Helvetica";
-=======
->>>>>>> Stashed changes
   if(player.fishType === "shark"){
     ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
     ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
@@ -194,7 +189,7 @@ function GameTick(elapsed) {
       }
       if(entity.id != player.id){
         if(collisionDetected(entity) && (entity.fishType != player.fishType)){
-          if(player.fishType === "minnow"){ 
+          if(player.fishType === "minnow"){
             ctx.fillText("(✖╭╮✖)", player.pos.x, player.pos.y + 33);
             player.isAlive = false;
           }
