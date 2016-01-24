@@ -1,9 +1,17 @@
 var canvas = null;
+
 var fps = null;
 var connection = false;
 
 var images = {};
 var board = {};
+
+var r1 = 50,
+  r2 = 100,
+  density = .4,
+  hideOnMove = false,
+  hideFill = 'rgba( 0, 0, 0, .7 )',
+  overlay = 'rgba( 0, 0, 0, 1 )';
 
 //image states
 var backgroundReady = false;
@@ -171,8 +179,20 @@ function GameTick(elapsed) {
 
   // Render objects
   if (connection) {
+      
+    var canvas =document.getElementById("canvas");
+    ctx2 = canvas.getContext('2d');
+      
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(images.background, 0, 0, 400, 400);
+    //black out canvas with fog
+    ctx2.fillStyle = overlay;
+    ctx2.fillRect( 0, 0, canvas.width, canvas.height);
+       
+    // set up our "eraser"
+    ctx.globalCompositeOperation = 'destination-out';
+        
+    
     for (var entity in board.clients) {
       if (board.clients.hasOwnProperty(entity)) {
         entity = board.clients[entity];
@@ -186,6 +206,30 @@ function GameTick(elapsed) {
         ctx.fillStyle = 'white';
         ctx.font = "12px Helvetica";
         ctx.fillText(username, x_coord + 14 - username.length, y_coord + 45);
+        
+        //reveal whereever we go
+        var radGrd = ctx.createRadialGradient(x_coord, y_coord, r1, x_coord, y_coord, r2);
+        radGrd.addColorStop(0, 'rgba( 0,0,0,1)');
+        radGrd.addColorStop(density, 'rgba( 0, 0, 0, .1 )');
+        radGrd.addColorStop(1, 'rgba( 0, 0, 0,  0 )');
+        
+        ctx2.fillStyle = radGrd;
+        ctx2.clearRect(x_coord - r2, y_coord - r2, r2 * 2, r2 * 2);
+        
+        // partially hide the entire map and re-reval where we are now
+        ctx2.globalCompositeOperation = 'source-over';
+        ctx2.clearRect(x_coord, y_coord, 400, 400);
+        ctx2.fillStyle = hideFill;
+        ctx2.fillRect(0, 0, 400, 400);
+
+        var radGrd = ctx.createRadialGradient(x_coord, y_coord, r1, x_coord, y_coord, r2);
+        radGrd.addColorStop(0, 'rgba( 0, 0, 0,  1 )');
+        radGrd.addColorStop(.8, 'rgba( 0, 0, 0, .1 )');
+        radGrd.addColorStop(1, 'rgba( 0, 0, 0,  0 )');
+
+        ctx2.globalCompositeOperation = 'destination-out';
+        ctx2.fillStyle = radGrd;
+        ctx2.fillRect(x_coord - r2, y_coord - r2, r2 * 2, r2 * 2);
       }
     }
   }
