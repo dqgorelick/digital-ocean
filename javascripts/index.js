@@ -3,7 +3,7 @@ var fps = null;
 var connection = false;
 
 var images = {};
-var board = {};
+var players = {};
 
 //image states
 var backgroundReady = false;
@@ -11,12 +11,12 @@ var sharkReady = false;
 var minnowReady = false;
 var barrierReady = false;
 
-// Username and controls flag
 var username = document.getElementById("username").innerHTML;
 var controls = document.getElementById("controls").innerHTML;
 
-// player to send to the server
-var player = {};
+var client = null;
+var player = null;
+//main player initiated in the $(document).ready();
 
 //backgroundImage
 images.background = new Image();
@@ -52,25 +52,6 @@ images.arrow.onload = function() {
   arrowReady = true;
 };
 images.arrow.src = "/images/arrow.png";
-
-// creates socket.io instance
-var client = io();
-client.on('onconnected', function(data) {
-  player.id = data.id;
-  player.state = data.state;
-  player.minnowsCaught = data.minnowsCaught;
-  player.physics = data.physics;
-  player.username = username;
-
-  console.log("Your username is " + player.id);
-  console.log("Your are a " + player.state);
-  console.log("Your initial position is " + JSON.stringify(player.physics));
-});
-
-client.on('updatedBoard', function(updatedBoard) {
-  connection = true;
-  board = updatedBoard;
-});
 
 var keysDown = {};
 
@@ -122,9 +103,9 @@ function handleMotionEvent(event) {
   var x = event.accelerationIncludingGravity.x;
   var y = event.accelerationIncludingGravity.y;
   var z = event.accelerationIncludingGravity.z;
-  player.physics.x -= x;
-  player.physics.y += y;
-  player.physics.z += z;
+  player.pos.x -= x;
+  player.pos.y += y;
+  player.pos.z += z;
 }
 
 if(controls === "tilt"){
@@ -134,7 +115,6 @@ if(controls === "tilt"){
 fps = null;
 canvas = null;
 ctx = null;
-// Our 'game' variables
 
 var sizeX = 50;
 var sizeY = 50;
@@ -142,78 +122,89 @@ var updateFlag = false;
 
 function GameTick(elapsed) {
   if (updateFlag) {
-    client.emit('update', player);
+    client.emit('client update', player);
   }
   updateFlag = !updateFlag;
   fps.update(elapsed);
-  // Movement physics
-  // Collision detection and response
-  //var lastX = player.physics.x;
   if (38 in keysDown) { // Player holding up
-    player.physics.y -= player.physics.speed * elapsed;
-
+    player.pos.y -= player.speed * elapsed;
   }
   if (40 in keysDown) { // Player holding down
-    player.physics.y += player.physics.speed * elapsed;
+    player.pos.y += player.speed * elapsed;
   }
   if (37 in keysDown) { // Player holding left
-    player.physics.x -= player.physics.speed * elapsed;
+    player.pos.x -= player.speed * elapsed;
   }
   if (39 in keysDown) { // Player holding right
-    player.physics.x += player.physics.speed * elapsed;
+    player.pos.x += player.speed * elapsed;
   }
-  var clients = board.clients;
-  for (var currentPlayer in board.clients) {
-    var currentPlayerObj = clients[currentPlayer];
-    if (clients.hasOwnProperty(currentPlayer) && currentPlayerObj.id != player.id && currentPlayerObj.state == "shark") {
-      if (collisionDetected(currentPlayerObj)) {
-        if (currentPlayerObj.state == "shark") {
-          currentPlayerObj.minnowsCaught++;
-        } else {
-          currentPlayerObj.state = "minnow";
-        }
-      }
-    }
-  }
-
   ctx.save();
+  ctx.restore();
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Draw background
+  ctx.drawImage(images.background, 0, 0, 400, 400);
 
-  // Render objects
-  if (connection) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(images.background, 0, 0, 400, 400);
-    for (var entity in board.clients) {
-      if (board.clients.hasOwnProperty(entity)) {
-        entity = board.clients[entity];
-        var x_coord = entity.physics.x;
-        var y_coord = entity.physics.y;
-        ctx.fillStyle = 'white';
-        ctx.font = "12px Helvetica";
-        if(entity.state == "shark") {
-          ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
-          ctx.fillText(username, x_coord + 14 - username.length, y_coord + 45);
-        } else {
-          ctx.drawImage(images.minnow, x_coord, y_coord, 28, 14);
-          ctx.fillText(username, x_coord + 5 - username.length, y_coord + 33);
-        }
-        if(entity.id === player.id){
-          ctx.drawImage(images.arrow, x_coord + 15, y_coord - 10, 14, 7);
-        }
-      }
+  // Draw player
+  ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
+  ctx.drawImage(images.arrow, player.pos.x + 15, player.pos.y - 10, 14, 7);
+
+  // Draw players
+  for (var entity in players) {
+    if (players.hasOwnProperty(entity)) {
+      entity = players[entity];
+      var x_coord = entity.pos.x;
+      var y_coord = entity.pos.y;
+      ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
+      ctx.fillStyle = 'white';
+      ctx.font = "12px Helvetica";
+      ctx.fillText(username, x_coord + 14 - username.length, y_coord + 45);
     }
   }
 }
 
 var collisionDetected = function(otherObject) {
-  return (otherObject.physics.x <= (player.physics.x + 32) &&
-    player.physics.x <= (otherObject.physics.x + 32) &&
-    otherObject.physics.y <= (player.physics.y + 32) &&
-    player.physics.y <= (otherObject.physics.y + 32))
+  return (otherObject.pos.x <= (player.pos.x + 32) &&
+    player.pos.x <= (otherObject.pos.x + 32) &&
+    otherObject.pos.y <= (player.pos.y + 32) &&
+    player.pos.y <= (otherObject.pos.y + 32))
 }
 
 $(document).ready(function() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
-  fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
-  GameLoopManager.run(GameTick);
+  client = io();
+  var firstload1 = true;
+  var firstload2 = true;
+  client.on('onconnected', function(updatedPositions) {
+    if(firstload1) {
+      console.log("connected");
+      // console.log(updatedPositions);
+      players = updatedPositions;
+      fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
+      firstload1 = false;
+    }
+  })
+  client.on('user-id', function(userId) {
+    if(firstload2) {
+      console.log("user-id")
+      var initialPosition = {x: canvas.width/2, y: canvas.height/2};
+      player = new Player(userId, initialPosition);
+      GameLoopManager.run(GameTick);
+      client.emit('client update', player);
+      firstload2 = false
+    }
+  })
+  client.on('server update', function(updates) {
+    // console.log("updates",updates);
+    for (var entity in updates) {
+      if (updates.hasOwnProperty(entity)) {
+        entity = updates[entity];
+        if (entity.id !== player.id) {
+          players[entity.id] = entity;
+          // console.log("players",players);
+        }
+      }
+    }
+  })
 })
