@@ -193,6 +193,10 @@ function GameTick(elapsed) {
             ctx.fillText("(✖╭╮✖)", player.pos.x, player.pos.y + 33);
             player.isAlive = false;
           }
+          if(entity.fishType === "minnow"){
+            ctx.fillText("(✖╭╮✖)", x_coord + 5, player.pos.y + 33);
+            entity.isAlive = false;
+          }
         }
       }
     }
