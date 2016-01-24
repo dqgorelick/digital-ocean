@@ -262,6 +262,8 @@ $(document).ready(function() {
     engine.minnowCount = boardState.minnowCount;
     engine.sharkCount = boardState.sharkCount;
     engine.timer = boardState.timer;
+    engine.status = boardState.status;
+    updateStatus();
     if (engine.timer === 0 && engine.waiting) {
       engine.waiting = false;
       engine.gameRound++;
@@ -269,3 +271,11 @@ $(document).ready(function() {
     }
   })
 })
+
+function updateStatus() {
+  if(engine.status === null) {
+    $(".status span").html("No connection to the reef :(")
+  } else {
+    $(".status span").html(engine.status);
+  }
+}

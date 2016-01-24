@@ -8,7 +8,8 @@ Game = function () {
     }
     this.safezoneWidth = 50;
     this.waiting = true;
-    this.timer = 20;
+    this.timer = 3;
+    this.status = null;
 }
 
 Game.prototype.Collisions = function(player) {
@@ -21,8 +22,8 @@ Game.prototype.Collisions = function(player) {
     if(player.fishType === "shark" && this.gameRound%2 === 1 && player.pos.x <= this.safezoneWidth) {
         player.pos.x = this.safezoneWidth;
     }
-    if(!player.safe && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x <= this.safezoneWidth - width) {
-        player.safe = true;
+    if(this.waiting && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x <= this.safezoneWidth - width) {
+        // player.safe = true;
     }
     if(player.safe && player.fishType === "minnow" && this.gameRound%2 === 1 && player.pos.x >= this.safezoneWidth - width) {
         player.pos.x = this.safezoneWidth - width;
@@ -34,8 +35,8 @@ Game.prototype.Collisions = function(player) {
     if(player.fishType === "shark" && this.gameRound%2 === 0 && player.pos.x >= canvas.width - this.safezoneWidth - width) {
         player.pos.x = canvas.width - this.safezoneWidth - width ;
     }
-    if(!player.safe && player.fishType === "minnow" && this.gameRound%2 === 0 && player.pos.x >= canvas.width - this.safezoneWidth) {
-        player.safe = true;
+    if(this.waiting && player.fishType === "minnow" && this.gameRound%2 === 0 && player.pos.x >= canvas.width - this.safezoneWidth) {
+        // player.safe = true;
     }
     if(player.safe && player.fishType === "minnow" && this.gameRound%2 === 0 && player.pos.x <= canvas.width - this.safezoneWidth) {
         player.pos.x = canvas.width - this.safezoneWidth;

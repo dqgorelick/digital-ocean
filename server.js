@@ -41,6 +41,7 @@ Game = function () {
     this.safezoneWidth = 50;
     this.waiting = true;
     this.timer = 3;
+    this.status = null;
 }
 
 //Game information
@@ -79,14 +80,20 @@ io.on('connection', function(socket) {
     })
 });
 
-var nextSecond = false;
+var nextSecond = true;
 var startCountdown = false;
+var countingDown = false;
+var roundBegin = false;
 function update() {
-    io.emit('status update', board);
+    board.status = "Waiting for a minnow to join to start the round!";
     if(board.minnowCount > 0){
         startCountdown = true;
     }
+    if(countingDown && !roundBegin){
+        board.status="Next round starts in: " + board.timer;
+    }
     if (startCountdown) {
+        countingDown = true;
         if(nextSecond && board.timer > 0) {
             board.timer--;
             nextSecond = false;
@@ -95,13 +102,19 @@ function update() {
                 console.log(board.timer);
             },1000);
             if (board.timer === 0 && board.waiting) {
+                countingDown = false;
                 startCountdown = false;
                 board.waiting = false;
+                roundBegin = true;
                 board.gameRound++;
             }
         }
     }
+    if (roundBegin) {
+        board.status = "Round " + board.gameRound + " begin!";
+    }
     setTimeout(update, 1000/5);
+    io.emit('status update', board);
 }
 
 http.listen(port, function() {
