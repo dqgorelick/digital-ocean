@@ -142,6 +142,7 @@ function GameTick(elapsed) {
   //var lastX = player.physics.x;
   if (38 in keysDown) { // Player holding up
     player.physics.y -= player.physics.speed * elapsed;
+
   }
   if (40 in keysDown) { // Player holding down
     player.physics.y += player.physics.speed * elapsed;
@@ -182,6 +183,9 @@ function GameTick(elapsed) {
         } else {
           ctx.drawImage(images.minnow, x_coord, y_coord, 28, 14);
         }
+        ctx.fillStyle = 'white';
+        ctx.font = "12px Helvetica";
+        ctx.fillText(username, x_coord + 14 - username.length, y_coord + 45);
       }
     }
   }
