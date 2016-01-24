@@ -153,7 +153,7 @@ function GameTick(elapsed) {
   if(player.fishType === "shark"){
     ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
   } else {
-    ctx.drawImage(images.minnow, player.pos.x, player.pos.y, 50, 28);
+    ctx.drawImage(images.minnow, player.pos.x, player.pos.y, 25, 14);
   }
   ctx.drawImage(images.arrow, player.pos.x + 15, player.pos.y - 10, 14, 7);
 
@@ -163,14 +163,14 @@ function GameTick(elapsed) {
       entity = players[entity];
       var x_coord = entity.pos.x;
       var y_coord = entity.pos.y;
-      if(entity.fishType === "shark"){
-        ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
-      } else {
-        ctx.drawImage(images.minnow, x_coord, y_coord, 50, 28);
-      }
       ctx.fillStyle = 'white';
       ctx.font = "12px Helvetica";
-      ctx.fillText(username, x_coord + 14 - username.length, y_coord + 45);
+      if(entity.fishType === "shark"){
+        ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
+        ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
+      } else {
+        ctx.drawImage(images.minnow, x_coord, y_coord, 25, 14);
+      }
       if(entity.id != player.id){
         if(collisionDetected(entity)){
           console.log(entity.fishType);
@@ -206,7 +206,7 @@ $(document).ready(function() {
     if(firstload2) {
       console.log("user-id")
       var initialPosition = {x: canvas.width/2, y: canvas.height/2};
-      player = new Player(userId, initialPosition, fishType);
+      player = new Player(userId, initialPosition, fishType, username);
       GameLoopManager.run(GameTick);
       client.emit('client update', player);
       firstload2 = false
