@@ -4,6 +4,8 @@ function Player (id, pos, fishType, username) {
     this.speed = 384;
     this.fishType = fishType;
     this.username = username;
+    this.isAlive = true;
+
     this.width = function() {
         if (this.fishType == "shark") {
             return 50;
@@ -13,6 +15,8 @@ function Player (id, pos, fishType, username) {
     }
     this.width = function() { return (this.fishType == "shark" ? 50 : 25)};
     this.height = function() { return (this.fishType == "shark" ? 28 : 14)};
+    // this.physics = physics;
+    // this.minnowsCaught = 0;
 }
 
 // Player.prototype.Physics = function(state) {
