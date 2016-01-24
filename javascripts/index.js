@@ -190,11 +190,13 @@ function GameTick(elapsed) {
       if(entity.id != player.id){
         if(collisionDetected(entity) && (entity.fishType != player.fishType)){
           if(player.fishType === "minnow"){
-            ctx.fillText("(✖╭╮✖)", player.pos.x, player.pos.y + 33);
+            ctx.fillText("(✖╭╮✖)", player.pos.x, player.pos.y + 53);
             player.isAlive = false;
           }
           if(entity.fishType === "minnow"){
-            ctx.fillText("(✖╭╮✖)", x_coord + 5, y_coord + 33);
+            ctx.fillText("(✖╭╮✖)", x_coord + 5, y_coord + 53);
+                    ctx.drawImage(images.shark, x_coord + 5, y_coord + 53);
+
             entity.isAlive = false;
           }
         }
