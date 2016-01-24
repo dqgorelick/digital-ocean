@@ -16,7 +16,7 @@ $shadow: 0 3px 2px black;
 
 // Styles
 html {
-    background-color: $grey;
+    background-color: #eeeeee;
 }
 
 body {
@@ -35,30 +35,29 @@ h1 {
     margin: 0;
 }
 
-canvas {
-    padding-left: 0;
-    padding-right: 0;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-    box-shadow: $shadow;
-    z-index: 1;
-}
 
-.wrap {
-    background-color: $blue;
-    width: 100%;
-    margin: 0 auto;
-    padding: 8px;
-    box-shadow: $shadow;
-}
 
 
 section.game {
+    canvas {
+        padding: 0 0 0 0;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;
+        display: block;
+        box-shadow: $shadow;
+        z-index: 1;
+    }
+    .wrap {
+        background-color: $blue;
+        width: 100%;
+        margin: 0 auto;
+        padding: 8px;
+        box-shadow: $shadow;
+    }
     .status {
         @include outer-container;
         position: relative;
-        padding: 20px 0;
         width: 750px;
         font-size: 30px;
         span{
@@ -72,6 +71,13 @@ section.game {
                 opacity: 1;
             }
         }
+    }
+    .info {
+        @include outer-container;
+        text-align: center;
+        padding: 10px;
+        font-size: 20px;
+        color: #000000;
     }
 }
 section.user-selection {
