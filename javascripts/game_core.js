@@ -64,10 +64,10 @@ Game.prototype.isEaten = function(player, enemy){
     // collide right side
     // collide top
     // collide bottom
-  return (otherObject.pos.x <= (player.pos.x + 32) &&
-    player.pos.x <= (otherObject.pos.x + 32) &&
-    otherObject.pos.y <= (player.pos.y + 32) &&
-    player.pos.y <= (otherObject.pos.y + 32))
+  return (enemy.pos.x <= (player.pos.x + 32) &&
+    player.pos.x <= (enemy.pos.x + 32) &&
+    enemy.pos.y <= (player.pos.y + 32) &&
+    player.pos.y <= (enemy.pos.y + 32))
 }
 
 

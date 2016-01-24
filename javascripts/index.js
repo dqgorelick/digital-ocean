@@ -109,9 +109,9 @@ function handleMotionEvent(event) {
   var z = event.accelerationIncludingGravity.z;
 
   if(player.isAlive){
-    player.pos.x -= x;
-    player.pos.y += y;
-    player.pos.z += z;
+    player.pos.x -= x * 0.16 * player.speed;
+    player.pos.y += y * 0.16 * player.speed;
+    player.pos.z += z * 0.16 * player.speed;
   }
 }
 
