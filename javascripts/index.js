@@ -186,8 +186,8 @@ function GameTick(elapsed) {
         ctx.drawImage(images.minnow, x_coord, y_coord, 25, 14);
         ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
       }
-      if(entity.id != player.id){
-        if(collisionDetected(entity) && (entity.fishType != player.fishType)){
+      if(player.id != entity.id){
+        if(engine.isEaten(player, entity) && (player.fishType != entity.fishType)){
           if(player.fishType === "minnow"){
             ctx.fillText("(✖╭╮✖)", player.pos.x, player.pos.y + 53);
             player.isAlive = false;
@@ -195,6 +195,9 @@ function GameTick(elapsed) {
           if(entity.fishType === "minnow"){
             ctx.fillText("(✖╭╮✖)", x_coord + 5, y_coord + 53);
             entity.isAlive = false;
+          }
+          if(entity.isAlive === false){
+            // ctx.drawImage(images.shark, x_coord + 5, y_coord + 53);
           }
         }
       }

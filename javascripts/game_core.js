@@ -52,7 +52,7 @@ Game.prototype.Collisions = function(player) {
     }
 }
 
-Game.prototype.isEaten = function(player, enemy)
+Game.prototype.isEaten = function(player, enemy){
     var widthPlayer = player.width();
     var heightPlayer = player.height();
     var widthEnemy = enemy.width();
