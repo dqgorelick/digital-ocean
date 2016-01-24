@@ -3,55 +3,61 @@ var fps = null;
 var connection = false;
 
 var images = {};
-images.shark = document.getElementById("shark");
+var board = {};
+
+//image states
+var backgroundReady = false;
+var sharkReady = false;
+var minnowReady = false;
+var barrierReady = false;
 
 // player to send to the server
 var player = {};
-// creates socket.io instance
-var client = io();
-client.on('onconnected', function(data) {
-    player.id = data.id;
-    console.log(player.id);
-    updatedBoard = data.state;
-});
-client.on('board state', function(state) {
-    connection = true;
-    updatedBoard = state;
-});
 
-var sharkReady = false;
-images.shark = new Image();
-images.shark.onload = function() {
-    sharkReady = true;
-};
-images.shark.src = "/images/sharksprite.png";
-
-var backgroundReady = false;
+//backgroundImage
 images.background = new Image();
 images.background.onload = function() {
-    backgroundReady = true;
+  backgroundReady = true;
 };
 images.background.src = "/images/backgroundsprite.png";
 
-// Game objects
-var shark = {
-    speed: 384 // movement in pixels per second
+//shark image
+images.shark = new Image();
+images.shark.onload = function() {
+  sharkReady = true;
 };
-var minnow = {
-    speed: 256
+images.shark.src = "images/sharksprite.png";
+
+// minnow image
+images.minnow = new Image();
+images.minnow.onload = function() {
+  minnowReady = true;
 };
+images.minnow.src = "images/fishsprite.png";
 
-var minnowsCaught = 0;
-
-// Reset the game when the player catches a minnow
-var reset = function() {
-    shark.x = canvas.width / 2;
-    shark.y = canvas.height / 2;
-
-    // Throw the minnow somewhere on the screen randomly
-    minnow.x = 32 + (Math.random() * (canvas.width - 64));
-    minnow.y = 32 + (Math.random() * (canvas.height - 64));
+//barrier image
+images.barrier = new Image();
+images.barrier.onload = function() {
+  barrierReady = true;
 };
+images.barrier.src = "images/barriers.png";
+
+// creates socket.io instance
+var client = io();
+client.on('onconnected', function(data) {
+  player.id = data.id;
+  player.state = data.state;
+  player.minnowsCaught = data.minnowsCaught;
+  player.physics = data.physics;
+  console.log("Your username is " + player.id);
+  console.log("Your are a " + player.state);
+  console.log("Your initial position is " + JSON.stringify(player.physics));
+});
+
+client.on('updatedBoard', function(updatedBoard) {
+  connection = true;
+  board = updatedBoard;
+});
 
 // Username and controls flag
 var username = document.getElementById("username").innerHTML;
@@ -104,19 +110,17 @@ if(controls === "joystick"){
 }
 
 function handleMotionEvent(event) {
-    var x = event.accelerationIncludingGravity.x;
-    var y = event.accelerationIncludingGravity.y;
-    var z = event.accelerationIncludingGravity.z;
-    shark.x -= x;
-    shark.y += y;
-    shark.z += z;
+  var x = event.accelerationIncludingGravity.x;
+  var y = event.accelerationIncludingGravity.y;
+  var z = event.accelerationIncludingGravity.z;
+  player.physics.x -= x;
+  player.physics.y += y;
+  player.physics.z += z;
 }
 
 if(controls === "tilt"){
     addEventListener("devicemotion", handleMotionEvent, true);
 }
-
-// initialize();
 
 fps = null;
 canvas = null;
@@ -126,83 +130,73 @@ ctx = null;
 var sizeX = 50;
 var sizeY = 50;
 var updateFlag = false;
-function GameTick(elapsed)
-{
-    if(updateFlag){
-        client.emit('update', player);
-    }
-    updateFlag = !updateFlag;
-    fps.update(elapsed);
-    // Movement physics
-    // Collision detection and response
-    var lastX = shark.x;
-    if (38 in keysDown) { // Player holding up
-        shark.y -= shark.speed * elapsed;
-    }
-    if (40 in keysDown) { // Player holding down
-        shark.y += shark.speed * elapsed;
-    }
-    if (37 in keysDown) { // Player holding left
-        shark.x -= shark.speed * elapsed;
-    }
-    if (39 in keysDown) { // Player holding right
-        shark.x += shark.speed * elapsed;
-    }
-    // lastX < shark.x ? images.direction.shark = 1: images.direction.shark = -1;
-    if (
-        shark.x <= (minnow.x + 32) && minnow.x <= (shark.x + 32) && shark.y <= (minnow.y + 32) && minnow.y <= (shark.y + 32)
-    ) {
-        ++minnowsCaught;
-        reset();
-    }
-    // --- Rendering
 
-    // Clear the screen
-    // ctx.fillStyle = "#000000";
-    // ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
+function GameTick(elapsed) {
+  if (updateFlag) {
+    client.emit('update', player);
+  }
+  updateFlag = !updateFlag;
+  fps.update(elapsed);
+  // Movement physics
+  // Collision detection and response
+  //var lastX = player.physics.x;
+  if (38 in keysDown) { // Player holding up
+    player.physics.y -= player.physics.speed * elapsed;
+  }
+  if (40 in keysDown) { // Player holding down
+    player.physics.y += player.physics.speed * elapsed;
+  }
+  if (37 in keysDown) { // Player holding left
+    player.physics.x -= player.physics.speed * elapsed;
+  }
+  if (39 in keysDown) { // Player holding right
+    player.physics.x += player.physics.speed * elapsed;
+  }
+  var clients = board.clients;
+  for (var currentPlayer in board.clients) {
+    var currentPlayerObj = clients[currentPlayer];
+    if (clients.hasOwnProperty(currentPlayer) && currentPlayerObj.id != player.id && currentPlayerObj.state == "shark") {
+      if (collisionDetected(currentPlayerObj)) {
+        if (currentPlayerObj.state == "shark") {
+          currentPlayerObj.minnowsCaught++;
+        } else {
+          currentPlayerObj.state = "minnow";
+        }
+      }
+    }
+  }
+
+  ctx.save();
+
+  // Render objects
+  if (connection) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(images.background, 0, 0, 400, 400);
-
-    // Render objects
-    if(connection) {
-        console.log(updatedBoard.active.length);
-        for (var i = 0; i < updatedBoard.active.length; i++) {
-            var entity_id = updatedBoard.active[i];
-            var x_coord = updatedBoard.clients[entity_id].x;
-            var y_coord = updatedBoard.clients[entity_id].y;
-            // if (entity_id !== player.id) {
-                {
-                    // ctx.fillStyle = "#ffffff";
-                    // ctx.setTransform(1, 0, 0, 1, x_coord, y_coord); // Transform that scales circle vertically into a flat ellipse
-                    // ctx.beginPath();
-                    // ctx.arc(0, 0, 12, 0, 2 * Math.PI, false);
-                    // ctx.fill();
-                    ctx.drawImage(images.shark, x_coord-25, y_coord-25, 50, 28);
-                }
-                ctx.restore();
-            // }
-        };
+    for (var entity in board.clients) {
+      if (board.clients.hasOwnProperty(entity)) {
+        entity = board.clients[entity];
+        var x_coord = entity.physics.x;
+        var y_coord = entity.physics.y;
+        if(entity.state == "shark") {
+          ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
+        } else {
+          ctx.drawImage(images.minnow, x_coord, y_coord, 28, 14);
+        }
+      }
     }
-    // ctx.save(); // Save the entire context because we'll be setting the transform. We could just reset to identity...
-    // {
-    //     ctx.fillStyle = "#ffffff";
-    //     ctx.setTransform(1, 0, 0, 1, hero.x, hero.y); // Transform that scales circle vertically into a flat ellipse
-    //     ctx.beginPath();
-    //     ctx.arc(0, 0, 12, 0, 2 * Math.PI, false);
-    //     ctx.fill();
-    // }
-    // ctx.drawImage(images.shark, x_coord-25, y_coord-25, 50, 28);
-
-    ctx.restore();
-    player.x = shark.x;
-    player.y = shark.y;
-
-    // console.log(player.x,player.y);
+  }
 }
-$(document).ready(function(){
-    canvas = document.getElementById("canvas");
-    ctx = canvas.getContext("2d");
-    fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
-    reset();
-    GameLoopManager.run(GameTick);
+
+var collisionDetected = function(otherObject) {
+  return (otherObject.physics.x <= (player.physics.x + 32) &&
+    player.physics.x <= (otherObject.physics.x + 32) &&
+    otherObject.physics.y <= (player.physics.y + 32) &&
+    player.physics.y <= (otherObject.physics.y + 32))
+}
+
+$(document).ready(function() {
+  canvas = document.getElementById("canvas");
+  ctx = canvas.getContext("2d");
+  fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
+  GameLoopManager.run(GameTick);
 })

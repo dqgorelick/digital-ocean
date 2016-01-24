@@ -30,40 +30,98 @@ app.get('/game/:username/:controls', function(req, res) {
 	res.render('game', {username: username, controls: controls});
 });
 
-Array.prototype.remove = function() {
-    var what, a = arguments, L = a.length, ax;
-    while (L && this.length) {
-        what = a[--L];
-        while ((ax = this.indexOf(what)) !== -1) {
-            this.splice(ax, 1);
-        }
-    }
-    return this;
+var sharkCount = 0;
+var minnowCount = 0;
+var gameRound = 0;
+var canvas = {width: 400, height: 400};
+
+//Game information
+var serverGameBoard = {
+  clients: {},
+  canvas: canvas,
+  sharkCount: sharkCount,
+  minnowCount: minnowCount
 };
 
-var server_GB = {
-    clients: {},
-    active : []
-}
-
 io.on('connection', function(client) {
-    client.userid = UUID();
-    server_GB.active.push(client.userid);
-    console.log('active clients: ' + server_GB.active.length);
-    // give client their ID
-
-    io.emit('onconnected', { id: client.userid, state: server_GB } );
-    client.on('update', function(player) {
-        server_GB.clients[player.id] = player;
-        io.emit('board state', server_GB);
+    client.id = UUID();
+    // determine if client will be shark or minnow
+    if (!gameRound && !sharkCount) {
+      client.state="shark"
+      client.speed=384;
+      ++sharkCount;
+    } else {
+      client.state="minnow"
+      client.speed=256;
+      ++minnowCount;
+    }
+    var physics = generatePlayerPhysics(client.state);
+    updatePlayer(client.id, client.state, 0, physics);
+    logClients();
+    //send client data
+    io.emit('onconnected', createPlayer(client.id, client.state, physics));
+    client.on('update', function(client) {
+        //add client to appropriate objects
+        updatePlayer(client.id, client.state, client.minnowsCaught, client.physics);
+        io.emit('updatedBoard', serverGameBoard);
     })
 
     client.on('disconnect', function() {
-        server_GB.active.remove(client.userid);
-        console.log('active clients: ' + server_GB.active.length);
+        if(client.state == "shark") {
+          --sharkCount;
+        } else {
+          --minnowCount;
+        }
+        console.log("Disconnecting: " + client.id);
+        delete serverGameBoard.clients[client.id];
+        logClients();
     });
 });
 
+var createPlayer = function(id, state, physics) {
+   return {id: id, state: state, minnowsCaught: 0, physics: physics}
+}
+
+var updatePlayer = function(id, state, minnowsCaught, physics) {
+    var player = serverGameBoard.clients[id];
+    //if player doesn't exist add them
+    if(!player) {
+      player = createPlayer(id, state, physics);
+      minnowsCaught = 0;
+      serverGameBoard.clients[id] = player;
+    }
+
+    if(player.state != state) {
+      if(state == "shark") {
+        --sharkCount;
+        ++minnowCount;
+      } else {
+        --minnowCount;
+        ++sharkCount;
+      }
+    }
+    player.minnowsCaught = minnowsCaught;
+    player.physics.x = physics.x;
+    player.physics.y = physics.y;
+}
+
+var generatePlayerPhysics = function(state) {
+    physics = {};
+    physics.y = 32 + (Math.random() * (canvas.height - 64));
+    if(state == "shark") {
+      physics.speed = 384;
+      physics.x = canvas.width-75;
+    } else {
+      physics.speed = 256;
+      physics.x = 10;
+    }
+    return physics;
+}
+
+var logClients = function() {
+  console.log("Logging players");
+  console.log('active players: ' + JSON.stringify(serverGameBoard.clients));
+}
 
 http.listen(port, function() {
     console.log("[ SERVER ] Hosting server on port " + port);
