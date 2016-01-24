@@ -7,28 +7,28 @@
 		<script src="/bower_components/jquery/dist/jquery.min.js"></script>
 	</head>
 	<body>
-        <section class="user-selection">
         <div class="wrap">
             <h1>Sharks and Minnows</h1>
         </div>
         <br>
         <div class="fishys">
             <img class="fishy1" src="/images/shark.gif"/>
-            <img class="fishy2" src="/images/fishRev.gif"/>
+        	<img class="fishy2" src="/images/fishRev.gif"/>
         </div>
+        <section class="user-selection">
 	        <div class="menu">
 				<form action="/" method="post">
-					<span>Username: </span><input type="text" name="username"/>
+					<span>Username: </span><input type="text" name="username" required/>
 					<br></br>
 					<input type="radio" name="controls" value="joystick"/><span>Joystick</span>
 					<input type="radio" name="controls" value="tilt"/><span>Tilt</span>
 					<input type="radio" name="controls" value="keyboard"/><span>Keyboard</span>
 					<br></br>
-					<input type="submit" value="Play as guest"/>
-                    <audio autoplay="" loop="" preload="">
-                      <source src="/music/Digital Ocean Main Theme.mp3" type="audio/mpeg">
-                    </audio>
+					<input type="submit" value="Play"/>
 
+					<audio autoplay="" loop="" preload="">
+					  <source src="/music/Digital Ocean Title Screen Mallets.mp3" type="audio/mpeg">
+					</audio>
 				</form>
 			</div>
 		</section>
