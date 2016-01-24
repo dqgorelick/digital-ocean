@@ -2,22 +2,38 @@ Game = function () {
     this.sharkCount = 0;
     this.minnowCount = 0;
     this.gameRound = 0;
-
+    this.canvas = {
+        width: 750,
+        height: 450
+    }
+    this.safezoneWidth = 50;
 }
 
 Game.prototype.Collisions = function(player) {
+    //Left wall.
+    var width = player.width();
+    var height = player.height();
     if(player.pos.x <= 0) {
         player.pos.x = 0;
-    }    //Left wall.
-    if(player.pos.x >= 400 ) {
-        player.pos.x = 400;
-    }    //Right wall
+    }
+    if(player.fishType === "shark" && this.gameRound%2 === 0 && player.pos.x <= this.safezoneWidth) {
+        player.pos.x = this.safezoneWidth;
+    }
+    //Right wall
+    if(player.pos.x + width >= canvas.width) {
+        player.pos.x = canvas.width - width ;
+    }
+    if(player.fishType === "shark" && this.gameRound%2 === 0 && player.pos.x >= canvas.width - this.safezoneWidth - width) {
+        player.pos.x = canvas.width - this.safezoneWidth - width ;
+    }
+    //Roof wall.
     if(player.pos.y <= 0) {
         player.pos.y = 0;
-    }    //Roof wall.
-    if(player.pos.y >= 400 ) {
-        player.pos.y = 400;
-    }    //Floor wall
+    }
+    //Floor wall
+    if(player.pos.y >= canvas.height - height) {
+        player.pos.y = canvas.height - height;
+    }
 }
 
 

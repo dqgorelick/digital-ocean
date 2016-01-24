@@ -4,7 +4,6 @@ var path = require("path");
 var port = process.argv[2] || 8080;
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var UUID = require('node-uuid');
 var bodyParser = require('body-parser');
 
 // set the view engine to ejs
@@ -30,24 +29,34 @@ app.get('/game/:username/:controls', function(req, res) {
 	res.render('game', {username: username, controls: controls});
 });
 
+Game = function () {
+    this.sharkCount = 0;
+    this.minnowCount = 0;
+    this.gameRound = 0;
+    this.canvas = {
+        width: 750,
+        height: 450
+    }
+}
 
 //Game information
 var clients = {};
+var players = [];
 var active = 0;
 
-io.on('connection', function(client) {
+io.on('connection', function(socket) {
     active++;
     console.log("active users", active);
 
-    clientID = UUID();
+    clientID = socket.id;
     // console.log(clientID);
     io.emit('onconnected', clients);
     io.emit('user-id', clientID);
-    client.on('client update', function(update) {
+    socket.on('client update', function(update) {
         clients[clientID] = update;
         io.emit('server update', clients)
     })
-    client.on('disconnect', function() {
+    socket.on('disconnect', function() {
         delete clients[clientID];
         active--;
         console.log("active users", active);
@@ -57,3 +66,5 @@ io.on('connection', function(client) {
 http.listen(port, function() {
     console.log("[ SERVER ] Hosting server on port " + port);
 });
+
+

@@ -5,6 +5,7 @@ var connection = false;
 var images = {};
 var players = {};
 
+var engine = new Game();
 //image states
 var backgroundReady = false;
 var sharkReady = false;
@@ -26,7 +27,7 @@ images.background = new Image();
 images.background.onload = function() {
   backgroundReady = true;
 };
-images.background.src = "/images/backgroundsprite.png";
+images.background.src = "/images/background-large.png";
 
 //shark image
 images.shark = new Image();
@@ -141,21 +142,32 @@ function GameTick(elapsed) {
   if (39 in keysDown) { // Player holding right
     player.pos.x += player.speed * elapsed;
   }
+  engine.Collisions(player);
   ctx.save();
   ctx.restore();
   // Clear canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   // Draw background
-  ctx.drawImage(images.background, 0, 0, 400, 400);
+  ctx.drawImage(images.background, 0, 0, 750, 450);
+
+  // Draw safe zones
+  if (engine.gameRound % 2 === 0) {
+    ctx.fillStyle = ctx.fillStyle = "rgba(109, 250, 147, 0.4)";
+    ctx.fillRect(engine.canvas.width-engine.safezoneWidth,0,engine.canvas.width,engine.canvas.height);
+  }
 
   // Draw player
-  console.log("Player is :" + player.fishType);
+  ctx.fillStyle = 'white';
+  ctx.font = "12px Helvetica";
   if(player.fishType === "shark"){
     ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
+    ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
   } else {
     ctx.drawImage(images.minnow, player.pos.x, player.pos.y, 25, 14);
+    ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
   }
   ctx.drawImage(images.arrow, player.pos.x + 15, player.pos.y - 10, 14, 7);
+
 
   // Draw players
   for (var entity in players) {
@@ -178,6 +190,9 @@ function GameTick(elapsed) {
       }
     }
   }
+
+  // Draw HUD
+
 }
 
 var collisionDetected = function(otherObject) {
