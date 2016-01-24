@@ -69,3 +69,8 @@ section.user-selection {
       font-family: "Lobster", cursive;
       font-size: 20px;
       text-decoration: none; }
+
+.fishys img {
+  display: block;
+  width: auto;
+  margin: auto; }
