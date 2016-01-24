@@ -107,9 +107,12 @@ function handleMotionEvent(event) {
   var x = event.accelerationIncludingGravity.x;
   var y = event.accelerationIncludingGravity.y;
   var z = event.accelerationIncludingGravity.z;
-  player.pos.x -= x;
-  player.pos.y += y;
-  player.pos.z += z;
+
+  if(player.isAlive){
+    player.pos.x -= x;
+    player.pos.y += y;
+    player.pos.z += z;
+  }
 }
 
 if(controls === "tilt"){
@@ -130,16 +133,16 @@ function GameTick(elapsed) {
   }
   updateFlag = !updateFlag;
   fps.update(elapsed);
-  if (38 in keysDown) { // Player holding up
+  if (38 in keysDown && player.isAlive) { // Player holding up
     player.pos.y -= player.speed * elapsed;
   }
-  if (40 in keysDown) { // Player holding down
+  if (40 in keysDown && player.isAlive) { // Player holding down
     player.pos.y += player.speed * elapsed;
   }
-  if (37 in keysDown) { // Player holding left
+  if (37 in keysDown && player.isAlive) { // Player holding left
     player.pos.x -= player.speed * elapsed;
   }
-  if (39 in keysDown) { // Player holding right
+  if (39 in keysDown && player.isAlive) { // Player holding right
     player.pos.x += player.speed * elapsed;
   }
   engine.Collisions(player);
@@ -160,8 +163,11 @@ function GameTick(elapsed) {
   }
 
   // Draw player
+<<<<<<< Updated upstream
   ctx.fillStyle = 'white';
   ctx.font = "12px Helvetica";
+=======
+>>>>>>> Stashed changes
   if(player.fishType === "shark"){
     ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
     ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
@@ -187,8 +193,11 @@ function GameTick(elapsed) {
         ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
       }
       if(entity.id != player.id){
-        if(collisionDetected(entity)){
-          console.log(entity.fishType);
+        if(collisionDetected(entity) && (entity.fishType != player.fishType)){
+          if(player.fishType === "minnow"){ 
+            ctx.fillText("(✖╭╮✖)", player.pos.x, player.pos.y + 33);
+            player.isAlive = false;
+          }
         }
       }
     }
@@ -228,7 +237,7 @@ $(document).ready(function() {
       player = new Player(userId, initialConfig.pos, initialConfig.fishType, username);
       GameLoopManager.run(GameTick);
       client.emit('client update', player);
-      firstload2 = false
+      firstload2 = false;
     }
   })
   var deleted = [];
