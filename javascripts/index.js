@@ -26,21 +26,21 @@ images.shark = new Image();
 images.shark.onload = function() {
   sharkReady = true;
 };
-images.shark.src = "images/sharksprite.png";
+images.shark.src = "/images/sharksprite.png";
 
 // minnow image
 images.minnow = new Image();
 images.minnow.onload = function() {
   minnowReady = true;
 };
-images.minnow.src = "images/fishsprite.png";
+images.minnow.src = "/images/fishsprite.png";
 
 //barrier image
 images.barrier = new Image();
 images.barrier.onload = function() {
   barrierReady = true;
 };
-images.barrier.src = "images/barriers.png";
+images.barrier.src = "/images/barriers.png";
 
 // creates socket.io instance
 var client = io();
