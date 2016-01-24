@@ -1,8 +1,8 @@
-function Player (id, pos) {
+function Player (id, pos, fishType) {
     this.id = id;
     this.pos = pos;
     this.speed = 384;
-    // this.state = state;
+    this.fishType = fishType;
     // this.physics = physics;
     // this.minnowsCaught = 0;
 }

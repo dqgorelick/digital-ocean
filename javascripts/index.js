@@ -14,6 +14,9 @@ var barrierReady = false;
 var username = document.getElementById("username").innerHTML;
 var controls = document.getElementById("controls").innerHTML;
 
+var types = ["shark", "minnow"];
+var fishType = types[Math.floor(Math.random()*types.length)];
+
 var client = null;
 var player = null;
 //main player initiated in the $(document).ready();
@@ -146,7 +149,12 @@ function GameTick(elapsed) {
   ctx.drawImage(images.background, 0, 0, 400, 400);
 
   // Draw player
-  ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
+  console.log("Player is :" + player.fishType);
+  if(player.fishType === "shark"){
+    ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
+  } else {
+    ctx.drawImage(images.minnow, player.pos.x, player.pos.y, 50, 28);
+  }
   ctx.drawImage(images.arrow, player.pos.x + 15, player.pos.y - 10, 14, 7);
 
   // Draw players
@@ -155,10 +163,19 @@ function GameTick(elapsed) {
       entity = players[entity];
       var x_coord = entity.pos.x;
       var y_coord = entity.pos.y;
-      ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
+      if(entity.fishType === "shark"){
+        ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
+      } else {
+        ctx.drawImage(images.minnow, x_coord, y_coord, 50, 28);
+      }
       ctx.fillStyle = 'white';
       ctx.font = "12px Helvetica";
       ctx.fillText(username, x_coord + 14 - username.length, y_coord + 45);
+      if(entity.id != player.id){
+        if(collisionDetected(entity)){
+          console.log(entity.fishType);
+        }
+      }
     }
   }
 }
@@ -189,7 +206,7 @@ $(document).ready(function() {
     if(firstload2) {
       console.log("user-id")
       var initialPosition = {x: canvas.width/2, y: canvas.height/2};
-      player = new Player(userId, initialPosition);
+      player = new Player(userId, initialPosition, fishType);
       GameLoopManager.run(GameTick);
       client.emit('client update', player);
       firstload2 = false
