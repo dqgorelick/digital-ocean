@@ -152,8 +152,11 @@ function GameTick(elapsed) {
 
   // Draw safe zones
   if (engine.gameRound % 2 === 0) {
-    ctx.fillStyle = ctx.fillStyle = "rgba(109, 250, 147, 0.4)";
+    ctx.fillStyle = ctx.fillStyle = "rgba(49, 129, 49, 0.4)";
     ctx.fillRect(engine.canvas.width-engine.safezoneWidth,0,engine.canvas.width,engine.canvas.height);
+  } else {
+    ctx.fillStyle = ctx.fillStyle = "rgba(49, 129, 49, 0.4)";
+    ctx.fillRect(0,0,engine.safezoneWidth,engine.canvas.height);
   }
 
   // Draw player
@@ -168,7 +171,6 @@ function GameTick(elapsed) {
   }
   ctx.drawImage(images.arrow, player.pos.x + 15, player.pos.y - 10, 14, 7);
 
-
   // Draw players
   for (var entity in players) {
     if (players.hasOwnProperty(entity)) {
@@ -182,6 +184,7 @@ function GameTick(elapsed) {
         ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
       } else {
         ctx.drawImage(images.minnow, x_coord, y_coord, 25, 14);
+        ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
       }
       if(entity.id != player.id){
         if(collisionDetected(entity)){
@@ -212,7 +215,7 @@ $(document).ready(function() {
     if(firstload1) {
       console.log("connected");
       // console.log(updatedPositions);
-      players = updatedPositions;
+      // players = updatedPositions;
       fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
       firstload1 = false;
     }
@@ -220,23 +223,37 @@ $(document).ready(function() {
   client.on('user-id', function(userId) {
     if(firstload2) {
       console.log("user-id")
-      var initialPosition = {x: canvas.width/2, y: canvas.height/2};
-      player = new Player(userId, initialPosition, fishType, username);
+      var initialConfig = engine.Spawn();
+      console.log(initialConfig);
+      player = new Player(userId, initialConfig.pos, initialConfig.fishType, username);
       GameLoopManager.run(GameTick);
       client.emit('client update', player);
       firstload2 = false
     }
   })
+  var deleted = [];
   client.on('server update', function(updates) {
-    // console.log("updates",updates);
     for (var entity in updates) {
       if (updates.hasOwnProperty(entity)) {
         entity = updates[entity];
         if (entity.id !== player.id) {
           players[entity.id] = entity;
-          // console.log("players",players);
+        }
+        for (var i = 0; i < deleted.length; i++) {
+          if (deleted[i] === entity.id) {
+            delete players[playerID];
+            console.log("deleting ID", playerID);
+            console.log("deleted", players[playerID]);
+          }
         }
       }
     }
+  })
+  client.on('remove player', function(playerID) {
+    deleted.push(playerID);
+  })
+  client.on('status update', function(boardState) {
+    // console.log(boardState);
+    // console.log(players);
   })
 })

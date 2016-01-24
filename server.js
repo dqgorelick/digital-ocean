@@ -30,9 +30,11 @@ app.get('/game/:username/:controls', function(req, res) {
 });
 
 Game = function () {
+    this.users = 0;
     this.sharkCount = 0;
     this.minnowCount = 0;
     this.gameRound = 0;
+    this.clients = clients;
     this.canvas = {
         width: 750,
         height: 450
@@ -41,14 +43,14 @@ Game = function () {
 
 //Game information
 var clients = {};
-var players = [];
-var active = 0;
+var board = new Game();
 
 io.on('connection', function(socket) {
-    active++;
-    console.log("active users", active);
-
+    board.users++;
+    console.log("active users", board.users);
+    update();
     clientID = socket.id;
+    console.log("adding", clientID);
     // console.log(clientID);
     io.emit('onconnected', clients);
     io.emit('user-id', clientID);
@@ -57,11 +59,18 @@ io.on('connection', function(socket) {
         io.emit('server update', clients)
     })
     socket.on('disconnect', function() {
-        delete clients[clientID];
-        active--;
-        console.log("active users", active);
+        io.emit('remove player', clientID);
+        console.log("removing", clientID);
+        delete clients.clientID;
+        board.users--;
+        console.log("active users", board.users);
     })
 });
+
+function update() {
+    io.emit('status update', board);
+    setTimeout(update, 1000/5);
+}
 
 http.listen(port, function() {
     console.log("[ SERVER ] Hosting server on port " + port);

@@ -4,6 +4,7 @@ function Player (id, pos, fishType, username) {
     this.speed = 384;
     this.fishType = fishType;
     this.username = username;
+    this.safe = false;
     this.width = function() {
         if (this.fishType == "shark") {
             return 50;
