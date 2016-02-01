@@ -51,7 +51,7 @@ var board = new Game();
 io.on('connection', function(socket) {
     board.users++;
     update();
-    clientID = socket.id;
+    var clientID = socket.id;
 
     io.emit('onconnected', clients);
     io.emit('user-id', clientID);
@@ -166,7 +166,7 @@ function update() {
 }
 
 http.listen(port, function() {
-    // console.log("[ SERVER ] Hosting server on port " + port);
+    console.log("[ SERVER ] Hosting server on port " + port);
 });
 
 
