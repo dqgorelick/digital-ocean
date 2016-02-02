@@ -10,6 +10,8 @@ var engine = new Game();
 var backgroundReady = false;
 var sharkReady = false;
 var minnowReady = false;
+var sharkRevReady = false;
+var minnowRevReady = false;
 var barrierReady = false;
 
 var username = document.getElementById("username").innerHTML;
@@ -36,12 +38,28 @@ images.shark.onload = function() {
 };
 images.shark.src = "/images/sharksprite.png";
 
+//shark image
+images.sharkRev = new Image();
+images.sharkRev.onload = function() {
+  sharkRevReady = true;
+};
+images.sharkRev.src = "/images/sharksprite_rev.png";
+
+
 // minnow image
 images.minnow = new Image();
 images.minnow.onload = function() {
   minnowReady = true;
 };
 images.minnow.src = "/images/fishsprite.png";
+
+// minnow image
+images.minnowRev = new Image();
+images.minnowRev.onload = function() {
+  minnowRevReady = true;
+};
+images.minnowRev.src = "/images/fishsprite_rev.png";
+
 
 //barrier image
 images.barrier = new Image();
@@ -141,9 +159,11 @@ function GameTick(elapsed) {
   }
   if (37 in keysDown && player.isAlive) { // Player holding left
     player.pos.x -= player.speed * elapsed;
+    player.direction = "left";
   }
   if (39 in keysDown && player.isAlive) { // Player holding right
     player.pos.x += player.speed * elapsed;
+    player.direction = "right";
   }
   engine.Collisions(player);
   // Clear canvas
@@ -166,10 +186,18 @@ function GameTick(elapsed) {
     ctx.fillStyle = 'white';
     ctx.font = "12px Helvetica";
     if(player.fishType === "shark"){
-      ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
+      if (player.direction == "left") {
+        ctx.drawImage(images.sharkRev, player.pos.x, player.pos.y, 50, 28);
+      } else {
+        ctx.drawImage(images.shark, player.pos.x, player.pos.y, 50, 28);
+      }
       ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
     } else {
-      ctx.drawImage(images.minnow, player.pos.x, player.pos.y, 25, 14);
+      if (player.direction == "left") {
+        ctx.drawImage(images.minnow, player.pos.x, player.pos.y, 25, 14);
+      } else {
+        ctx.drawImage(images.minnowRev, player.pos.x, player.pos.y, 25, 14);
+      }
       ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
     }
   } else {
@@ -186,14 +214,23 @@ function GameTick(elapsed) {
       var y_coord = entity.pos.y;
       ctx.fillStyle = 'white';
       ctx.font = "12px Helvetica";
+      console.log(entity.direction);
       if(deadPlayers.indexOf(tempID) !== -1) {
         ctx.fillText("(✖╭╮✖)", x_coord - 5, y_coord + 20);
       } else {
         if(entity.fishType === "shark"){
-          ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
+          if(entity.direction == "left") {
+            ctx.drawImage(images.sharkRev, x_coord, y_coord, 50, 28);
+          } else {
+            ctx.drawImage(images.shark, x_coord, y_coord, 50, 28);
+          }
           ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
         } else {
-          ctx.drawImage(images.minnow, x_coord, y_coord, 25, 14);
+          if(entity.direction == "left") {
+            ctx.drawImage(images.minnow, x_coord, y_coord, 25, 14);
+          } else {
+            ctx.drawImage(images.minnowRev, x_coord, y_coord, 25, 14);
+          }
           ctx.fillText(entity.username, x_coord + 5 - (entity.username).length, y_coord + 33);
         }
         if(player.id != entity.id){

@@ -7,6 +7,7 @@ function Player (id, pos, fishType, username) {
     this.isAlive = true;
     this.isSafe = false;
     this.checkpoint = false;
+    this.direction = "right";
     this.width = function() {
         if (this.fishType == "shark") {
             return 50;
