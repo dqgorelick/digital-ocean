@@ -172,6 +172,8 @@ function GameTick(elapsed) {
       ctx.drawImage(images.minnow, player.pos.x, player.pos.y, 25, 14);
       ctx.fillText(player.username, player.pos.x + 5 - (player.username).length, player.pos.y + 33);
     }
+  } else {
+    ctx.fillText("(✖╭╮✖)", player.pos.x - 5, player.pos.y + 20);
   }
   ctx.drawImage(images.arrow, player.pos.x + 15, player.pos.y - 10, 14, 7);
 
@@ -184,7 +186,6 @@ function GameTick(elapsed) {
       var y_coord = entity.pos.y;
       ctx.fillStyle = 'white';
       ctx.font = "12px Helvetica";
-        // if(deadPlayers[i]) {
       if(deadPlayers.indexOf(tempID) !== -1) {
         ctx.fillText("(✖╭╮✖)", x_coord - 5, y_coord + 20);
       } else {
@@ -217,6 +218,7 @@ var collisionDetected = function(otherObject) {
 
 var waitingFlag = true;
 
+var count = 0;
 $(document).ready(function() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
@@ -252,18 +254,22 @@ $(document).ready(function() {
         if (entity.id !== player.id) {
           players[entity.id] = entity;
         }
-        // for (var i = 0; i < deleted.length; i++) {
-        //   if (deleted[i] === entity.id) {
-        //     delete players[playerID];
-        //
-        //
-        //   }
-        // }
+        for (var i = 0; i < deleted.length; i++) {
+          if (deleted[i] === entity.id) {
+            delete players[entity.id];
+          }
+        }
       }
+    }
+    count++;
+    if(count % 50 == 0) {
+      console.log(players);
     }
   })
   client.on('remove player', function(playerID) {
     deleted.push(playerID);
+    console.log("removed", playerID);
+    delete players[playerID];
   })
   client.on('status update', function(boardState) {
     engine.minnowCount = boardState.minnowCount;
@@ -287,8 +293,7 @@ $(document).ready(function() {
     deadPlayers = deadies;
   });
   client.on('all players', function(everyone) {
-
-    var live = ""
+    var live = "";
     for (var i = 0; i < everyone.length; i++) {
       live += everyone[i];
       live += "<br>";

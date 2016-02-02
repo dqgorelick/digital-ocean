@@ -59,35 +59,30 @@ io.on('connection', function(socket) {
         clients[clientID] = update;
         if (!board.waiting && clients[clientID].isSafe && safePlayers.indexOf(clientID) === -1) {
             safePlayers.push(clientID);
-            // remaining--;
         }
         if(!clients[clientID].isAlive && deadPlayers.indexOf(clientID) === -1) {
-            // console.log(clientID + " added to dead fish array")
             deadPlayers.push(clientID);
             remaining--;
-            // console.log("before", allPlayers);
             allPlayers.splice(allPlayers.indexOf(clients[clientID].username),1);
-            // console.log("after", allPlayers);
         }
         io.emit('server update', clients)
     })
     socket.on('join', function(player){
         if(player.fishType == "shark") {
-            // console.log("shark spawns");
             board.sharkCount++;
         }
         if(player.fishType == "minnow") {
-            // console.log("minnow spawns")
             board.minnowCount++;
-            // console.log("pushed " + player.username + " to the list");
             allPlayers.push(player.username);
         }
 
     })
     socket.on('disconnect', function() {
         io.emit('remove player', clientID);
-        // console.log("removing", clientID);
-        delete clients.clientID;
+        if (clients[clientID].fishType == 'shark') {
+            board.sharkCount--;
+        }
+        delete clients[clientID];
         board.users--;
     })
 });
@@ -133,7 +128,6 @@ function update() {
                 roundBegin = true;
                 toNextRound = true;
                 remaining = board.minnowCount;
-                // console.log(remaining, " IS REMAINING");
                 board.gameRound++;
             }
         }
