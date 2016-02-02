@@ -218,7 +218,6 @@ var collisionDetected = function(otherObject) {
 
 var waitingFlag = true;
 
-var count = 0;
 $(document).ready(function() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
@@ -246,7 +245,6 @@ $(document).ready(function() {
       firstload2 = false;
     }
   })
-  var deleted = [];
   client.on('server update', function(updates) {
     for (var entity in updates) {
       if (updates.hasOwnProperty(entity)) {
@@ -254,21 +252,10 @@ $(document).ready(function() {
         if (entity.id !== player.id) {
           players[entity.id] = entity;
         }
-        for (var i = 0; i < deleted.length; i++) {
-          if (deleted[i] === entity.id) {
-            delete players[entity.id];
-          }
-        }
       }
-    }
-    count++;
-    if(count % 50 == 0) {
-      console.log(players);
     }
   })
   client.on('remove player', function(playerID) {
-    deleted.push(playerID);
-    console.log("removed", playerID);
     delete players[playerID];
   })
   client.on('status update', function(boardState) {
