@@ -41,7 +41,7 @@ Game engine improvements (reference notes.txt)
 - Huy Le – [huyle333](https://github.com/huyle333)
 - Cheyan Setayesh – [Cheyans](https://github.com/Cheyans)
 - Kaitlen Sousa – [k8sousa](https://github.com/k8sousa)
-- Andy Li – [heyletsmakeawish](https://github.com/heyletsmakeawish)
+- Andy Shen – [heyletsmakeawish](https://github.com/heyletsmakeawish)
 - Andrew Ton – [andrew-ton](https://github.com/andrew-ton)
 - Chris DeLucia – [topher12093](https://github.com/topher12093)
 
