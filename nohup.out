@@ -1,0 +1,122 @@
+
+> digital-ocean@1.0.0 start /home/ubuntu/digital-ocean
+> gulp
+
+[21:47:16] Using gulpfile ~/digital-ocean/gulpfile.js
+[21:47:16] Starting 'server'...
+[21:47:16] Finished 'server' after 3.17 ms
+[21:47:16] Starting 'watch'...
+[21:47:16] Finished 'watch' after 8.31 ms
+[21:47:16] Starting 'styles'...
+[21:47:16] [nodemon] 1.8.1
+[21:47:16] [nodemon] to restart at any time, enter `rs`
+[21:47:16] [nodemon] watching: *.*
+[21:47:16] [nodemon] starting `node server.js`
+
+stream.js:94
+      throw er; // Unhandled stream error in pipe.
+            ^
+Error: EBADF, read
+npm ERR! weird error 8
+npm WARN This failure might be due to the use of legacy binary "node"
+npm WARN For further explanations, please read
+/usr/share/doc/nodejs/README.Debian
+ 
+npm ERR! not ok code 0
+
+> digital-ocean@1.0.0 start /home/ubuntu/digital-ocean
+> gulp
+
+[21:48:12] Using gulpfile ~/digital-ocean/gulpfile.js
+[21:48:12] Starting 'server'...
+[21:48:12] Finished 'server' after 2.58 ms
+[21:48:12] Starting 'watch'...
+[21:48:12] Finished 'watch' after 7.19 ms
+[21:48:12] Starting 'styles'...
+[21:48:12] [nodemon] 1.8.1
+[21:48:12] [nodemon] to restart at any time, enter `rs`
+[21:48:12] [nodemon] watching: *.*
+[21:48:12] [nodemon] starting `node server.js`
+
+stream.js:94
+      throw er; // Unhandled stream error in pipe.
+            ^
+Error: EBADF, read
+npm ERR! weird error 8
+npm WARN This failure might be due to the use of legacy binary "node"
+npm WARN For further explanations, please read
+/usr/share/doc/nodejs/README.Debian
+ 
+npm ERR! not ok code 0
+
+> digital-ocean@1.0.0 start /home/ubuntu/digital-ocean
+> gulp
+
+[21:48:43] Using gulpfile ~/digital-ocean/gulpfile.js
+[21:48:43] Starting 'server'...
+[21:48:43] Finished 'server' after 2.57 ms
+[21:48:43] Starting 'watch'...
+[21:48:43] Finished 'watch' after 7.2 ms
+[21:48:43] Starting 'styles'...
+[21:48:43] [nodemon] 1.8.1
+[21:48:43] [nodemon] to restart at any time, enter `rs`
+[21:48:43] [nodemon] watching: *.*
+[21:48:43] [nodemon] starting `node server.js`
+
+stream.js:94
+      throw er; // Unhandled stream error in pipe.
+            ^
+Error: EBADF, read
+npm ERR! weird error 8
+npm WARN This failure might be due to the use of legacy binary "node"
+npm WARN For further explanations, please read
+/usr/share/doc/nodejs/README.Debian
+ 
+npm ERR! not ok code 0
+FATAL ERROR: Evacuation Allocation failed - process out of memory
+[ SERVER ] Hosting server on port 8080
+
+events.js:72
+        throw er; // Unhandled 'error' event
+              ^
+Error: listen EACCES
+    at errnoException (net.js:901:11)
+    at Server._listen2 (net.js:1020:19)
+    at listen (net.js:1061:10)
+    at Server.listen (net.js:1135:5)
+    at Object.<anonymous> (/home/ubuntu/digital-ocean/server.js:162:6)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+    at Module.load (module.js:356:32)
+    at Function.Module._load (module.js:312:12)
+    at Function.Module.runMain (module.js:497:10)
+
+events.js:72
+        throw er; // Unhandled 'error' event
+              ^
+Error: listen EACCES
+    at errnoException (net.js:901:11)
+    at Server._listen2 (net.js:1020:19)
+    at listen (net.js:1061:10)
+    at Server.listen (net.js:1135:5)
+    at Object.<anonymous> (/home/ubuntu/digital-ocean/server.js:162:6)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+    at Module.load (module.js:356:32)
+    at Function.Module._load (module.js:312:12)
+    at Function.Module.runMain (module.js:497:10)
+
+events.js:72
+        throw er; // Unhandled 'error' event
+              ^
+Error: listen EADDRINUSE
+    at errnoException (net.js:901:11)
+    at Server._listen2 (net.js:1039:14)
+    at listen (net.js:1061:10)
+    at Server.listen (net.js:1135:5)
+    at Object.<anonymous> (/home/ubuntu/digital-ocean/server.js:162:6)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+    at Module.load (module.js:356:32)
+    at Function.Module._load (module.js:312:12)
+    at Function.Module.runMain (module.js:497:10)
