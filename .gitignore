@@ -33,5 +33,6 @@ node_modules
 .node_repl_history
 
 bower_components
-
+nohup.out
+.DS_Store
 digital-ocean.pem
