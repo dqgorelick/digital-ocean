@@ -1,6 +1,7 @@
 # Sharks and Minnows (digital-ocean)
-Sharks and minnows meets a maze meets Mario Party meets socket.io
-Created during HackBeanpot 2016
+Sharks and minnows meets a maze meets Mario Party meets socket.io. Originally created at HackBeanpot 2016.
+
+[Demo, invite your friends!](http://sharksandminnows.xyz/)
 
 ##TODO
 Create chat
@@ -46,5 +47,5 @@ Game engine improvements (reference notes.txt)
 - Chris DeLucia – [topher12093](https://github.com/topher12093)
 
 ##Music
-- Simon Ton – [SoundCloud](https://soundcloud.com/simon_ton/digital-ocean-main-theme-draft/s-s1YlT)
+- Simon Ton – [SoundCloud](https://soundcloud.com/simon_ton)
 
