@@ -1,6 +1,6 @@
 # Sharks and Minnows (digital-ocean)
 
-![Shark](http://sharksandminnows.xyz/images/README/shark.gif) ![Minnow](http://sharksandminnows.xyz/images/README/minnow.gif)
+![Shark](./images/README/shark.gif) ![Minnow](./images/README/minnow.gif)
 
 
 Sharks and minnows meets a maze meets Mario Party meets socket.io. Originally created at HackBeanpot 2016.
