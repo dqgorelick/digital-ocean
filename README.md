@@ -4,19 +4,28 @@ Created during HackBeanpot 2016
 
 ##TODO
 Create chat
+
 - option to type (parse for expletives)
 - option for emotes (5 options or so)
+
 Code Refactor
+
 - Consistant naming convention
 - Remove bad code
+
 Game Logic
+
 - Points system
 - Reset rounds
 - Game objective?
+
 Throttling
+
 - Optimize refresh rates for more users
 - Limit number of users
+
 Game engine improvements (reference notes.txt)
+
 - Add interpolation
 - Delay from server
 - Caching of location
