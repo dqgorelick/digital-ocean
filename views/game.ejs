@@ -4,11 +4,10 @@
     <title>Digital Ocean!</title>
     <link rel="stylesheet" href="/dist/index.css">
       <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-      <script src="/javascripts/vendor/JareUtils.js"></script>
-      <script src="/javascripts/vendor/GameLoopManager.js"></script>
-      <script src="/javascripts/eventHandlers.js"></script>
-      <script src="/javascripts/game_core.js"></script>
-      <script src="/javascripts/player.js"></script>
+      <script src="/public/js/vendor/JareUtils.js"></script>
+      <script src="/public/js/vendor/GameLoopManager.js"></script>
+      <script src="/public/js/game_core.js"></script>
+      <script src="/public/js/player.js"></script>
       <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
 </head>
 <body>
@@ -16,13 +15,6 @@
     <div class="wrap">
       <h1>Sharks and Minnows</h1>
     </div>
-    <% if(controls === "joystick") { %>
-      <button id="up">up</button>
-      <button id="left">left</button>
-      <button id="right">right</button>
-      <button id="down">down</button>
-    <% } %>
-
     <canvas id="canvas" width="750" height="450"></canvas>
     <div class="status">
       <span>No connection to server :(</span>
@@ -32,9 +24,8 @@
     </div>
   </section>
   <audio autoplay="" loop="" preload="">
-    <source src="/music/Digital Ocean Main Theme.mp3" type="audio/mpeg">
+    <source src="/public/audio/Digital Ocean Main Theme.mp3" type="audio/mpeg">
   </audio>
-  <script src="/javascripts/index.js"></script>
+  <script src="/public/js/index.js"></script>
 </body>
 </html>
-

@@ -1,37 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Sharks and Minnows</title>
-        <link rel="stylesheet" href="/dist/index.css">
-		<script src="/bower_components/jquery/dist/jquery.min.js"></script>
-	</head>
-	<body>
-        <div class="wrap">
-            <h1>Sharks and Minnows</h1>
-        </div>
-        <br>
-        <div class="fishys">
-            <img class="fishy1" src="/images/shark.gif"/>
-        	<img class="fishy2" src="/images/fishRev.gif"/>
-        </div>
-        <section class="user-selection">
-	        <div class="menu">
-				<form action="/" method="post">
-					<span>Username: </span><input type="text" name="username" required/>
-					<br></br>
-					<input type="radio" name="controls" value="joystick"/><span>Joystick</span>
-					<input type="radio" name="controls" value="tilt"/><span>Tilt</span>
-					<input type="radio" name="controls" value="keyboard" checked="checked"/><span>Keyboard</span>
-					<br></br>
-					<input type="submit" value="Play"/>
 
-					<audio autoplay="" loop="" preload="">
-					  <source src="/music/Digital Ocean Title Screen Mallets.mp3" type="audio/mpeg">
-					</audio>
-				</form>
-			</div>
-		</section>
-    </div>
-	</body>
+<head>
+	<meta charset="utf-8">
+	<title>Sharks and Minnows</title>
+	<link rel="stylesheet" href="/dist/index.css">
+	<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+</head>
+
+<body>
+	<div class="wrap">
+		<h1>Sharks and Minnows</h1>
+	</div>
+	<br>
+	<div class="fishys">
+		<img class="fishy1" src="/public/images/shark.gif" />
+		<img class="fishy2" src="/public/images/fishRev.gif" />
+	</div>
+	<section class="user-selection">
+		<div class="menu">
+			<form action="/" method="post">
+				<span>Username: </span>
+				<input type="text" name="username" required/>
+				<br>
+				<input type="radio" name="controls" value="tilt" /><span>Tilt</span>
+				<input type="radio" name="controls" value="keyboard" checked="checked" /><span>Keyboard</span>
+				<br>
+				<input type="submit" value="Play" />
+
+				<audio autoplay="" loop="" preload="">
+					<source src="/public/audio/Digital Ocean Title Screen Mallets.mp3" type="audio/mpeg">
+				</audio>
+			</form>
+		</div>
+	</section>
+</body>
+
 </html>

@@ -29,21 +29,21 @@ images.background = new Image();
 images.background.onload = function() {
   backgroundReady = true;
 };
-images.background.src = "/images/background-large.png";
+images.background.src = "/public/images/background-large.png";
 
 //shark image
 images.shark = new Image();
 images.shark.onload = function() {
   sharkReady = true;
 };
-images.shark.src = "/images/sharksprite.png";
+images.shark.src = "/public/images/sharksprite.png";
 
 //shark image
 images.sharkRev = new Image();
 images.sharkRev.onload = function() {
   sharkRevReady = true;
 };
-images.sharkRev.src = "/images/sharksprite_rev.png";
+images.sharkRev.src = "/public/images/sharksprite_rev.png";
 
 
 // minnow image
@@ -51,29 +51,21 @@ images.minnow = new Image();
 images.minnow.onload = function() {
   minnowReady = true;
 };
-images.minnow.src = "/images/fishsprite.png";
+images.minnow.src = "/public/images/fishsprite.png";
 
 // minnow image
 images.minnowRev = new Image();
 images.minnowRev.onload = function() {
   minnowRevReady = true;
 };
-images.minnowRev.src = "/images/fishsprite_rev.png";
-
-
-//barrier image
-images.barrier = new Image();
-images.barrier.onload = function() {
-  barrierReady = true;
-};
-images.barrier.src = "/images/barriers.png";
+images.minnowRev.src = "/public/images/fishsprite_rev.png";
 
 //arrow image
 images.arrow = new Image();
 images.arrow.onload = function() {
   arrowReady = true;
 };
-images.arrow.src = "/images/arrow.png";
+images.arrow.src = "/public/images/arrow.png";
 
 var keysDown = {};
 
@@ -84,40 +76,6 @@ if(controls === "keyboard"){
 
     addEventListener("keyup", function(e) {
         delete keysDown[e.keyCode];
-    }, false);
-}
-
-if(controls === "joystick"){
-    document.getElementById("up").addEventListener("touchstart", function() {
-        keysDown[38] = true;
-    }, false);
-
-    document.getElementById("up").addEventListener("touchend", function() {
-        delete keysDown[38];
-    }, false);
-
-    document.getElementById("left").addEventListener("touchstart", function() {
-        keysDown[37] = true;
-    }, false);
-
-    document.getElementById("left").addEventListener("touchend", function() {
-        delete keysDown[37];
-    }, false);
-
-    document.getElementById("right").addEventListener("touchstart", function() {
-        keysDown[39] = true;
-    }, false);
-
-    document.getElementById("right").addEventListener("touchend", function() {
-        delete keysDown[39];
-    }, false);
-
-    document.getElementById("down").addEventListener("touchstart", function() {
-        keysDown[40] = true;
-    }, false);
-
-    document.getElementById("down").addEventListener("touchend", function() {
-        delete keysDown[40];
     }, false);
 }
 

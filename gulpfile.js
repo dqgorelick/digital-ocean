@@ -4,19 +4,22 @@ var neat = require('node-neat').includePaths;
 var nodemon = require('gulp-nodemon');
 
 var paths = {
-    scss: './stylesheets/*.scss'
+    scss: './public/css/*.scss'
 };
 
 gulp.task('server', function () {
     nodemon({
-        script: 'server.js'
+        script: 'app.js'
         , ext: 'js html'
-          , env: { 'NODE_ENV': 'development' }
+        , env: { 'NODE_ENV': 'development' }
     })
 });
 
 gulp.task('jshint', function () {
-    gulp.src('javascripts/*.js')
+    gulp.src('client/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+    gulp.src('server/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
@@ -30,7 +33,7 @@ gulp.task('styles', function(){
 });
 
 gulp.task('watch', function() {
-    gulp.watch('stylesheets/**.scss', ['styles']);
+    gulp.watch(paths.scss, ['styles']);
 });
 
 gulp.task('default', ['server','watch','styles']);
