@@ -2,9 +2,9 @@ var express = require("express");
 var app = express();
 var path = require("path");
 var port = process.argv[2] || 8080;
-var http = require('http').Server(app);
 var bodyParser = require('body-parser');
-var game = require('./server/server');
+var http = require('http').Server(app);
+var gameServer = require('./server/gameServer')(http);
 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname));
@@ -30,5 +30,3 @@ app.get('/game/:username/:controls', function(req, res) {
 http.listen(port, function() {
     console.log("[ SERVER ] Hosting server on port " + port);
 });
-
-module.export = {http}

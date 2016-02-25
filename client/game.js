@@ -105,6 +105,7 @@ var updateFlag = false;
 
 var deadPlayers = [];
 function GameTick(elapsed) {
+  debugger
   if (updateFlag) {
     client.emit('client update', player);
   }
@@ -214,12 +215,14 @@ var collisionDetected = function(otherObject) {
 var waitingFlag = true;
 
 $(document).ready(function() {
+  debugger
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   client = io();
   var firstload1 = true;
   var firstload2 = true;
   client.on('onconnected', function(updatedPositions) {
+    debugger
     if(firstload1) {
 
       //

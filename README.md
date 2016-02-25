@@ -1,6 +1,6 @@
 # Sharks and Minnows (digital-ocean)
 
-![Shark](./images/README/shark.gif) ![Minnow](./images/README/minnow.gif)
+![Shark](./public/images/shark.gif) ![Minnow](./public/images/fishRev.gif)
 
 
 Sharks and minnows meets a maze meets Mario Party meets socket.io. Originally created at HackBeanpot 2016.
@@ -52,4 +52,3 @@ Game engine improvements (reference notes.txt)
 
 ##Music
 - Simon Ton – [SoundCloud](https://soundcloud.com/simon_ton)
-
