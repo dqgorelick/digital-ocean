@@ -105,7 +105,6 @@ var updateFlag = false;
 
 var deadPlayers = [];
 function GameTick(elapsed) {
-  debugger
   if (updateFlag) {
     client.emit('client update', player);
   }
@@ -173,7 +172,6 @@ function GameTick(elapsed) {
       var y_coord = entity.pos.y;
       ctx.fillStyle = 'white';
       ctx.font = "12px Helvetica";
-      console.log(entity.direction);
       if(deadPlayers.indexOf(tempID) !== -1) {
         ctx.fillText("(✖╭╮✖)", x_coord - 5, y_coord + 20);
       } else {
@@ -215,18 +213,13 @@ var collisionDetected = function(otherObject) {
 var waitingFlag = true;
 
 $(document).ready(function() {
-  debugger
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   client = io();
   var firstload1 = true;
   var firstload2 = true;
   client.on('onconnected', function(updatedPositions) {
-    debugger
     if(firstload1) {
-
-      //
-      // players = updatedPositions;
       firstload1 = false;
     }
   })
